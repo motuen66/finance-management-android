@@ -5,14 +5,15 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
 
+    <!-- Authentication Flow -->
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.financemanagement.ui.auth.LoginFragment"
         android:label="fragment_login_new"
         tools:layout="@layout/fragment_login_new">
         <action
-            android:id="@+id/action_loginFragment_to_dashBoardFragment"
-            app:destination="@id/dashBoardFragment"
+            android:id="@+id/action_loginFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
         <action
@@ -26,8 +27,8 @@
         android:label="fragment_register_new"
         tools:layout="@layout/fragment_register_new">
         <action
-            android:id="@+id/action_registerFragment_to_dashBoardFragment"
-            app:destination="@id/dashBoardFragment"
+            android:id="@+id/action_registerFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
         <action
@@ -37,6 +38,38 @@
             app:popUpToInclusive="true" />
     </fragment>
 
+    <!-- Main App Screens with Bottom Navigation -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.financemanagement.ui.home.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/reportsFragment"
+        android:name="com.example.financemanagement.ui.reports.ReportsFragment"
+        android:label="Reports"
+        tools:layout="@layout/fragment_reports" />
+
+    <fragment
+        android:id="@+id/accountsFragment"
+        android:name="com.example.financemanagement.ui.accounts.AccountsFragment"
+        android:label="Accounts"
+        tools:layout="@layout/fragment_accounts" />
+
+    <fragment
+        android:id="@+id/budgetFragment"
+        android:name="com.example.financemanagement.ui.budget.BudgetFragment"
+        android:label="Budget"
+        tools:layout="@layout/fragment_budget" />
+
+    <fragment
+        android:id="@+id/inboxFragment"
+        android:name="com.example.financemanagement.ui.inbox.InboxFragment"
+        android:label="Inbox"
+        tools:layout="@layout/fragment_inbox" />
+
+    <!-- Legacy Dashboard (keep for now, can remove later) -->
     <fragment
         android:id="@+id/dashBoardFragment"
         android:name="com.example.financemanagement.ui.dashboard.DashboardFragment"

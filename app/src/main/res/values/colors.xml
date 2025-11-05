@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Legacy Material Colors -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -7,4 +8,21 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- App Theme: Purple & Pink Gradient -->
+    <color name="primary_gradient_start">#A66BFF</color>
+    <color name="primary_gradient_end">#FF99CC</color>
+    <color name="accent">#FFC7E6</color>
+    <color name="background">#FAF7FF</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="text_primary">#2B2240</color>
+    <color name="text_secondary">#7A6B9B</color>
+    <color name="positive">#00C875</color>
+    <color name="negative">#FF5A78</color>
+    <color name="warning">#FFD66B</color>
+    <color name="divider">#E8E1F5</color>
+    
+    <!-- Bottom Navigation Colors -->
+    <color name="bottom_nav_active">#A66BFF</color>
+    <color name="bottom_nav_inactive">#7A6B9B</color>
 </resources>

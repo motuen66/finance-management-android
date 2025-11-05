@@ -80,8 +80,8 @@ class RegisterFragment : Fragment() {
                         binding.progress.visibility = View.GONE
                         binding.btnRegister.isEnabled = true
                         Toast.makeText(requireContext(), "Đăng ký thành công!", Toast.LENGTH_SHORT).show()
-                        // Navigate to Dashboard
-                        findNavController().navigate(R.id.action_registerFragment_to_dashBoardFragment)
+                        // Navigate to Home (with bottom nav)
+                        findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
                     }
                     is AuthUiState.LoginSuccess -> {
                         // Ignore login success in register screen
