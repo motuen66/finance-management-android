@@ -52,7 +52,7 @@ interface ApiService {
     suspend fun deleteCategory(@Path("id") id: String): Response<Unit>
 
     // ========== BUDGETS ==========
-    @GET("api/Budgets")
+    @GET("api/budgets")
     suspend fun getBudgets(): Response<List<Budget>>
 
     @GET("api/Budgets/{id}")
