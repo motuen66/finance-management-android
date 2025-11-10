@@ -48,10 +48,10 @@ class SavingGoalsAdapter(
                 progressBar.progress = progressPercentage
                 tvProgressPercentage.text = "$progressPercentage%"
 
-                // Amounts
-                val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
-                tvCurrentAmount.text = currencyFormat.format(goal.currentAmount)
-                tvTargetAmount.text = "of ${currencyFormat.format(goal.goalAmount)}"
+                // Amounts (no currency symbol)
+                val currencyFormat = NumberFormat.getNumberInstance(Locale.US).apply { maximumFractionDigits = 0 }
+                tvCurrentAmount.text = "${currencyFormat.format(goal.currentAmount)} đ"
+                tvTargetAmount.text = "of ${currencyFormat.format(goal.goalAmount)} đ"
 
                 // Target date
                 val dateFormatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())

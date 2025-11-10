@@ -283,8 +283,8 @@ class AccountsFragment : Fragment() {
             // Check if amount exceeds remaining amount needed
             val remainingAmount = goal.goalAmount - goal.currentAmount
             if (amount > remainingAmount) {
-                val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
-                dialogBinding.etAmount.error = "Max allowed: ${currencyFormat.format(remainingAmount)}"
+                val currencyFormat = NumberFormat.getNumberInstance(Locale.US).apply { maximumFractionDigits = 0 }
+                dialogBinding.etAmount.error = "Max allowed: ${currencyFormat.format(remainingAmount)} đ"
                 return@setOnClickListener
             }
             
@@ -423,8 +423,8 @@ class AccountsFragment : Fragment() {
 
             // Validate: new goal amount should not be less than current contributed amount
             if (amount < goal.currentAmount) {
-                val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
-                dialogBinding.etTargetAmount.error = "Cannot be less than contributed amount (${currencyFormat.format(goal.currentAmount)})"
+                val currencyFormat = NumberFormat.getNumberInstance(Locale.US).apply { maximumFractionDigits = 0 }
+                dialogBinding.etTargetAmount.error = "Cannot be less than contributed amount (${currencyFormat.format(goal.currentAmount)} đ)"
                 return@setOnClickListener
             }
 
