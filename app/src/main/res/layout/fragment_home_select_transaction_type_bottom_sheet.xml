@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:text="Add"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp"  android:layout_height="match_parent"
+        android:layout_width="match_parent"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/selectExpenseBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/ic_expense"
+        app:iconGravity="textStart"
+        android:text="Expsense" />
+
+    <Button
+        android:id="@+id/selectIncomeType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Income"
+         />
+
+    <Button
+        android:id="@+id/selectTransferType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Transfer" />
+
+    <Button
+        android:id="@+id/selectBudgetType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Budget" />
+</LinearLayout>

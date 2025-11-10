@@ -24,7 +24,10 @@ data class BudgetEntity(
     val month: Int,
     
     @ColumnInfo(name = "year")
-    val year: Int
+    val year: Int,
+
+    @ColumnInfo(name = "categoryName")
+    val categoryName: String
 )
 
 // Mapper functions
@@ -34,7 +37,8 @@ fun BudgetEntity.toDomainModel() = Budget(
     categoryId = categoryId,
     limitAmount = limitAmount,
     month = month,
-    year = year
+    year = year,
+    categoryName = categoryName
 )
 
 fun Budget.toEntity() = BudgetEntity(
@@ -43,5 +47,6 @@ fun Budget.toEntity() = BudgetEntity(
     categoryId = categoryId,
     limitAmount = limitAmount,
     month = month,
-    year = year
+    year = year,
+    categoryName = categoryName
 )
