@@ -29,13 +29,14 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
+    abstract fun bindCategoryRepository(impl: CategoryRepositoryImpl): CategoryRepository
+
+    @Binds
+    @Singleton
     abstract fun bindSavingGoalRepository(impl: SavingGoalRepositoryImpl): SavingGoalRepository
 
     @Binds
     @Singleton
     abstract fun bindBudgetRepository(impl: BudgetRepositoryImpl): BudgetRepository
 
-    @Binds
-    @Singleton
-    abstract fun bindCategoryRepository(impl: CategoryRepositoryImpl): CategoryRepository
 }
