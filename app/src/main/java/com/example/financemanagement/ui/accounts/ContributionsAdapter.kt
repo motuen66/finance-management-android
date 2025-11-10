@@ -36,9 +36,9 @@ class ContributionsAdapter(
 
         fun bind(contribution: SavingContribution) {
             binding.apply {
-                // Amount
-                val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
-                tvAmount.text = "+${currencyFormat.format(contribution.amount)}"
+                // Amount (no currency symbol)
+                val currencyFormat = NumberFormat.getNumberInstance(Locale.US).apply { maximumFractionDigits = 0 }
+                tvAmount.text = "+${currencyFormat.format(contribution.amount)} đ"
 
                 // Date
                 val dateFormatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())

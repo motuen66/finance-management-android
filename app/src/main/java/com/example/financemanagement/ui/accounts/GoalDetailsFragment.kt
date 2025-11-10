@@ -189,10 +189,10 @@ class GoalDetailsFragment : Fragment() {
                 // Ignore if progressBar not present (defensive)
             }
             
-            // Amounts
-            val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
-            tvCurrentAmount.text = currencyFormat.format(goal.currentAmount)
-            tvTargetAmount.text = "of ${currencyFormat.format(goal.goalAmount)}"
+            // Amounts (no currency symbol)
+            val currencyFormat = NumberFormat.getNumberInstance(Locale.US).apply { maximumFractionDigits = 0 }
+            tvCurrentAmount.text = "${currencyFormat.format(goal.currentAmount)} đ"
+            tvTargetAmount.text = "of ${currencyFormat.format(goal.goalAmount)} đ"
             
             // Target date
             val dateFormatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
@@ -252,8 +252,8 @@ class GoalDetailsFragment : Fragment() {
             // Check if amount exceeds remaining amount needed
             val remainingAmount = goal.goalAmount - goal.currentAmount
             if (amount > remainingAmount) {
-                val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
-                dialogBinding.etAmount.error = "Max allowed: ${currencyFormat.format(remainingAmount)}"
+                val currencyFormat = NumberFormat.getNumberInstance(Locale.US).apply { maximumFractionDigits = 0 }
+                dialogBinding.etAmount.error = "Max allowed: ${currencyFormat.format(remainingAmount)} đ"
                 return@setOnClickListener
             }
             
@@ -370,8 +370,8 @@ class GoalDetailsFragment : Fragment() {
             
             // Validate: new goal amount should not be less than current contributed amount
             if (amount < goal.currentAmount) {
-                val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
-                dialogBinding.etTargetAmount.error = "Cannot be less than contributed amount (${currencyFormat.format(goal.currentAmount)})"
+                val currencyFormat = NumberFormat.getNumberInstance(Locale.US).apply { maximumFractionDigits = 0 }
+                dialogBinding.etTargetAmount.error = "Cannot be less than contributed amount (${currencyFormat.format(goal.currentAmount)} đ)"
                 return@setOnClickListener
             }
             
