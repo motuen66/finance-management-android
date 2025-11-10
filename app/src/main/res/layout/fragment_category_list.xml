@@ -11,7 +11,6 @@
         android:orientation="vertical"
         android:background="#F9FAFB">
 
-        <!-- Toolbar with Dropdown Filter -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -34,7 +33,18 @@
 
         </com.google.android.material.appbar.MaterialToolbar>
 
-        <!-- Progress Bar -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="0dp"      android:layout_marginBottom="8dp"    android:layout_marginEnd="16dp"
+            android:contentDescription="Add Goal"
+            android:src="@android:drawable/ic_input_add"
+            app:backgroundTint="@color/purple_500"
+            app:tint="@android:color/white" />
+
+
         <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
@@ -44,7 +54,6 @@
             android:visibility="gone"
             tools:visibility="visible" />
 
-        <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_categories"
             android:layout_width="match_parent"
@@ -57,7 +66,6 @@
             android:overScrollMode="ifContentScrolls"
             tools:listitem="@layout/item_category" />
 
-        <!-- Empty State -->
         <LinearLayout
             android:id="@+id/tv_empty"
             android:layout_width="wrap_content"
@@ -68,7 +76,7 @@
             android:visibility="gone"
             android:padding="32dp"
             tools:visibility="visible">
-            
+
             <ImageView
                 android:layout_width="120dp"
                 android:layout_height="120dp"
@@ -76,7 +84,7 @@
                 android:alpha="0.2"
                 app:tint="#9CA3AF"
                 android:contentDescription="No categories" />
-            
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -85,7 +93,7 @@
                 android:textColor="#6B7280"
                 android:fontFamily="sans-serif-medium"
                 android:layout_marginTop="16dp" />
-                
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -93,23 +101,9 @@
                 android:textSize="14sp"
                 android:textColor="#9CA3AF"
                 android:layout_marginTop="8dp" />
-                
+
         </LinearLayout>
 
     </LinearLayout>
-
-    <!-- FAB for Add Category -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="24dp"
-        android:contentDescription="@string/add_category"
-        app:srcCompat="@android:drawable/ic_input_add"
-        app:tint="@android:color/white"
-        app:fabSize="normal"
-        app:elevation="6dp"
-        app:pressedTranslationZ="12dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

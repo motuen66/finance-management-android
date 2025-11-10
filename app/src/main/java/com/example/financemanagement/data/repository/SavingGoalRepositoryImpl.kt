@@ -28,6 +28,14 @@ class SavingGoalRepositoryImpl @Inject constructor(
             if (response.isSuccessful) {
                 val body = response.body()
                 if (body != null) {
+                    // If server returned an empty list, prefer local cache to avoid wiping
+                    // locally-created goals that haven't synced yet.
+                    if (body.isEmpty()) {
+                        val localGoals = savingGoalDao.getAllSavingGoals().map { it.toDomainModel() }
+                        Log.w("SavingGoalRepo", "Server returned empty goals list; falling back to local cache (${localGoals.size} items)")
+                        return Result.success(localGoals)
+                    }
+
                     // Cache data locally
                     val entities = body.map { it.toEntity() }
                     savingGoalDao.insertSavingGoals(entities)
