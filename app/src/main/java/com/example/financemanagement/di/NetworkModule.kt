@@ -3,7 +3,9 @@ package com.example.financemanagement.di
 import com.example.financemanagement.utils.Constants
 import com.example.financemanagement.data.local.TokenManager
 import com.example.financemanagement.data.remote.api.ApiService
+import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,11 +39,15 @@ object NetworkModule {
     fun provideAuthInterceptor(tokenManager: TokenManager): Interceptor = Interceptor { chain ->
         val token = tokenManager.getCachedToken()
         val requestBuilder = chain.request().newBuilder()
-        
+
+        // Debug: log whether token is present (do NOT log the token value in production)
         if (!token.isNullOrEmpty()) {
+            android.util.Log.d("NetworkModule", "Auth token present, adding Authorization header")
             requestBuilder.addHeader("Authorization", "Bearer $token")
+        } else {
+            android.util.Log.d("NetworkModule", "No auth token cached")
         }
-        
+
         chain.proceed(requestBuilder.build())
     }
 
