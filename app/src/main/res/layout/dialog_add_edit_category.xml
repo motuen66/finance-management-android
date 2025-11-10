@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -18,7 +19,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/category_name"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="16dp"
+        app:boxCornerRadiusTopStart="20dp"
+        app:boxCornerRadiusTopEnd="20dp"
+        app:boxCornerRadiusBottomEnd="20dp"
+        app:boxCornerRadiusBottomStart="20dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_category_name"
@@ -53,13 +58,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/cancel"
-            android:layout_marginEnd="8dp" />
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:strokeColor="@color/purple_500"
+            app:strokeWidth="1dp"
+            app:cornerRadius="20dp"
+            android:layout_marginEnd="16dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/save" />
+            android:text="@string/save"
+            app:cornerRadius="20dp" />
 
     </LinearLayout>
 

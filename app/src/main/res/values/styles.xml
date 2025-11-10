@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<!-- Primary button used across auth screens -->
+	<style name="Widget.App.PrimaryButton" parent="Widget.MaterialComponents.Button">
+		<item name="android:textSize">18sp</item>
+		<item name="android:textStyle">bold</item>
+		<item name="cornerRadius">12dp</item>
+		<item name="android:paddingTop">12dp</item>
+		<item name="android:paddingBottom">12dp</item>
+		<item name="backgroundTint">@color/purple_500</item>
+		<item name="android:textColor">@android:color/white</item>
+	</style>
+
+</resources>
