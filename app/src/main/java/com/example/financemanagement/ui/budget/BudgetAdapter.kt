@@ -6,15 +6,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.financemanagement.databinding.ItemBudgetBinding
-import java.text.NumberFormat
-import java.util.Locale
+import com.example.financemanagement.utils.CurrencyFormatter
 
 class BudgetAdapter(
     private val onEditClick: (BudgetItem) -> Unit,
-    private val onDeleteClick: (BudgetItem) -> Unit
+    private val onDeleteClick: (BudgetItem) -> Unit,
+    private val onItemClick: ((BudgetItem) -> Unit)? = null
 ) : ListAdapter<BudgetItem, BudgetAdapter.BudgetViewHolder>(BudgetDiffCallback()) {
-
-    private val numberFormat = NumberFormat.getInstance(Locale("vi", "VN"))
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BudgetViewHolder {
         val binding = ItemBudgetBinding.inflate(
@@ -22,7 +20,7 @@ class BudgetAdapter(
             parent,
             false
         )
-        return BudgetViewHolder(binding, onEditClick, onDeleteClick, numberFormat)
+        return BudgetViewHolder(binding, onEditClick, onDeleteClick, onItemClick)
     }
 
     override fun onBindViewHolder(holder: BudgetViewHolder, position: Int) {
@@ -33,19 +31,24 @@ class BudgetAdapter(
         private val binding: ItemBudgetBinding,
         private val onEditClick: (BudgetItem) -> Unit,
         private val onDeleteClick: (BudgetItem) -> Unit,
-        private val numberFormat: NumberFormat
+        private val onItemClick: ((BudgetItem) -> Unit)?
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: BudgetItem) {
             binding.tvCategoryIcon.text = item.categoryIcon
             binding.tvCategoryName.text = item.categoryName
             
-            // Display limit amount as formatted number
-            binding.tvAmount.text = numberFormat.format(item.limitAmount.toLong())
+            // Display limit amount với format ngắn (K/M)
+            binding.tvAmount.text = CurrencyFormatter.formatShortWithCurrency(item.limitAmount)
             
             // Click listeners
             binding.tvEdit.setOnClickListener {
                 onEditClick(item)
+            }
+            
+            // Item click listener
+            binding.root.setOnClickListener {
+                onItemClick?.invoke(item)
             }
 
         }

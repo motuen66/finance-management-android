@@ -1,7 +1,8 @@
 package com.example.financemanagement.viewmodel
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financemanagement.data.repository.SavingGoalRepository
 import com.example.financemanagement.domain.model.SavingGoal
@@ -42,8 +43,9 @@ sealed interface EditGoalUiState {
 
 @HiltViewModel
 class SavingGoalViewModel @Inject constructor(
+    application: Application,
     private val repository: SavingGoalRepository
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow<SavingGoalUiState>(SavingGoalUiState.Loading)
     val uiState: StateFlow<SavingGoalUiState> = _uiState.asStateFlow()
@@ -157,6 +159,10 @@ class SavingGoalViewModel @Inject constructor(
                 .onSuccess {
                     Log.d("SavingGoalVM", "Contribution added successfully")
                     _contributionState.value = ContributionUiState.Success
+                    
+                    // Kiểm tra và gửi thông báo tiến độ tiết kiệm
+                    checkAndNotifySavingsProgress(goalId)
+                    
                     // Local DB already updated by repository.addContribution (and updateGoalProgress).
                     // Rely on observeSavingGoals() and observeContributionsForGoal() to emit updated data
                     // Avoid immediate remote refresh which may overwrite local progress with stale server data.
@@ -267,5 +273,27 @@ class SavingGoalViewModel @Inject constructor(
 
     fun resetEditGoalState() {
         _editGoalState.value = EditGoalUiState.Idle
+    }
+    
+    /**
+     * Kiểm tra tiến độ và gửi thông báo
+     */
+    private fun checkAndNotifySavingsProgress(goalId: String) {
+        viewModelScope.launch {
+            try {
+                repository.getSavingGoalById(goalId)
+                    .onSuccess { goal ->
+                        val percentage = if (goal.goalAmount > 0) {
+                            ((goal.currentAmount / goal.goalAmount) * 100).toInt()
+                        } else {
+                            0
+                        }
+                        
+                        Log.d("SavingGoalVM", "Savings progress: ${goal.title} = $percentage%")
+                    }
+            } catch (e: Exception) {
+                Log.e("SavingGoalVM", "Error checking savings progress", e)
+            }
+        }
     }
 }

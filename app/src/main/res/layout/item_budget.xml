@@ -56,21 +56,6 @@
 
         <!-- Amount with Currency -->
         <TextView
-            android:id="@+id/tv_currency_symbol"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:text="vnđ"
-            android:textColor="@color/primary_gradient_start"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@id/tv_amount"
-            app:layout_constraintEnd_toStartOf="@id/tv_edit"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            />
-
-        <TextView
             android:id="@+id/tv_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -79,8 +64,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             tools:text="20,000"
-            app:layout_constraintEnd_toEndOf="@id/tv_category_name"
-            app:layout_constraintEnd_toStartOf="@id/tv_currency_symbol"
+            app:layout_constraintEnd_toStartOf="@id/tv_edit"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 

@@ -1,6 +1,7 @@
 package com.example.financemanagement.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financemanagement.data.local.TokenManager
 import com.example.financemanagement.data.remote.models.TransactionRequest
@@ -16,10 +17,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeAddExpenseViewModel @Inject constructor(
+    application: Application,
     private val budgetRepository: BudgetRepository,
     private val transactionRepository: TransactionRepository,
     private val tokenManager: TokenManager
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
     private val _budgets = MutableStateFlow<List<Budget>>(emptyList())
     val budgets: StateFlow<List<Budget>> = _budgets

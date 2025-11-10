@@ -50,6 +50,9 @@
         <action
             android:id="@+id/action_homeFragment_to_homeAddIncomeFragment"
             app:destination="@id/homeAddIncomeFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_budgetDetailsFragment"
+            app:destination="@id/budgetDetailsFragment" />
     </fragment>
 
     <fragment
@@ -86,7 +89,13 @@
         android:id="@+id/budgetFragment"
         android:name="com.example.financemanagement.ui.budget.BudgetFragment"
         android:label="Budget"
-        tools:layout="@layout/fragment_budget" />
+        tools:layout="@layout/fragment_budget">
+        
+        <action
+            android:id="@+id/action_budgetFragment_to_budgetDetailsFragment"
+            app:destination="@id/budgetDetailsFragment" />
+            
+    </fragment>
 
     <fragment
         android:id="@+id/inboxFragment"
@@ -117,5 +126,18 @@
         android:name="com.example.financemanagement.ui.category.CategoryListFragment"
         android:label="@string/categories"
         tools:layout="@layout/fragment_category_list" />
+
+    <!-- Budget Details -->
+    <fragment
+        android:id="@+id/budgetDetailsFragment"
+        android:name="com.example.financemanagement.ui.home.BudgetDetailsFragment"
+        android:label="Budget Details"
+        tools:layout="@layout/fragment_budget_details">
+        
+        <argument
+            android:name="budgetId"
+            app:argType="string" />
+            
+    </fragment>
 
 </navigation>

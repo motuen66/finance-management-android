@@ -7,7 +7,7 @@
     <View
         android:layout_width="0dp"
         android:layout_height="280dp"
-        android:background="@drawable/bg_button_gradient"
+        android:background="@color/purple_500"
         tools:ignore="MissingConstraints" />
     <!-- Header Title -->
     <TextView
@@ -80,7 +80,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="24dp"
-                    android:background="@drawable/bg_gradient_blue">
+                    android:background="@color/purple_500">
 
                     <!-- Money Bag Icon with Purple Background -->
                     <View
@@ -132,20 +132,6 @@
                         app:layout_constraintEnd_toStartOf="@id/tv_total_budget"
                         app:layout_constraintTop_toBottomOf="@id/tv_monthly_budget_label" />
 
-                    <!-- Total Budget Amount -->
-                    <TextView
-                        android:id="@+id/tv_currency"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=" đ"
-                        android:textColor="@android:color/white"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:layout_marginEnd="4dp"
-                        app:layout_constraintStart_toEndOf="@id/tv_total_budget"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent" />
-
                     <TextView
                         android:id="@+id/tv_total_budget"
                         android:layout_width="wrap_content"
@@ -159,7 +145,7 @@
                         android:shadowDy="2"
                         android:shadowRadius="4"
                         tools:text="21,000"
-                        app:layout_constraintEnd_toStartOf="@id/tv_currency"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -213,7 +199,7 @@
                 android:id="@+id/tv_empty_state"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Chưa có budget nào.\nNhấn + để thêm budget mới"
+                android:text="No budgets yet.\nTap + to add a new budget"
                 android:textAlignment="center"
                 android:textColor="#999999"
                 android:textSize="16sp"

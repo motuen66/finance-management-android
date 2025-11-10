@@ -8,15 +8,16 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.financemanagement.databinding.FragmentBudgetBinding
+import com.example.financemanagement.utils.CurrencyFormatter
 import com.example.financemanagement.viewmodel.BudgetUiState
 import com.example.financemanagement.viewmodel.BudgetViewModel
 import com.example.financemanagement.viewmodel.CategoryCreationState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -29,8 +30,6 @@ class BudgetFragment : Fragment() {
     
     private val vm: BudgetViewModel by viewModels()
     private lateinit var budgetAdapter: BudgetAdapter
-    
-    private val numberFormat = NumberFormat.getInstance(Locale("vi", "VN"))
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,17 +64,30 @@ class BudgetFragment : Fragment() {
                 // Only allow delete if budget exists (has been set)
                 if (budgetItem.budgetId != null) {
                     androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                        .setTitle("Xóa Budget")
-                        .setMessage("Bạn có chắc muốn xóa budget cho ${budgetItem.categoryName}?")
-                        .setPositiveButton("Xóa") { _, _ ->
+                        .setTitle("Delete Budget")
+                        .setMessage("Are you sure you want to delete the budget for ${budgetItem.categoryName}?")
+                        .setPositiveButton("Delete") { _, _ ->
                             vm.deleteBudget(budgetItem.budgetId)
                         }
-                        .setNegativeButton("Hủy", null)
+                        .setNegativeButton("Cancel", null)
                         .show()
                 } else {
                     Toast.makeText(
                         requireContext(),
-                        "Không có budget để xóa",
+                        "No budget to delete",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            },
+            onItemClick = { budgetItem ->
+                // Navigate to Budget Details
+                if (budgetItem.budgetId != null) {
+                    val action = BudgetFragmentDirections.actionBudgetFragmentToBudgetDetailsFragment(budgetItem.budgetId)
+                    findNavController().navigate(action)
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Budget not set yet",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -131,9 +143,9 @@ class BudgetFragment : Fragment() {
                         if (expenseCategories.isEmpty()) {
                             // No expense categories - show empty state
                             binding.tvEmptyState.visibility = View.VISIBLE
-                            binding.tvEmptyState.text = "Chưa có danh mục chi tiêu.\nVui lòng tạo danh mục để quản lý ngân sách."
+                            binding.tvEmptyState.text = "No expense categories.\nPlease create categories to manage budgets."
                             binding.rvBudgets.visibility = View.GONE
-                            binding.tvTotalBudget.text = "0"
+                            binding.tvTotalBudget.text = CurrencyFormatter.formatShortWithCurrency(0.0)
                             return@collectLatest
                         }
                         
@@ -150,14 +162,14 @@ class BudgetFragment : Fragment() {
                         
                         // Calculate total budget (sum of all limit amounts) with formatted number
                         val total = budgetItems.sumOf { it.limitAmount }
-                        binding.tvTotalBudget.text = numberFormat.format(total.toLong())
+                        binding.tvTotalBudget.text = CurrencyFormatter.formatShortWithCurrency(total)
                     }
                     is BudgetUiState.Error -> {
                         binding.progressBar.visibility = View.GONE
                         binding.rvBudgets.visibility = View.GONE
                         Toast.makeText(
                             requireContext(),
-                            "Lỗi: ${state.message}",
+                            "Error: ${state.message}",
                             Toast.LENGTH_LONG
                         ).show()
                     }
@@ -175,14 +187,14 @@ class BudgetFragment : Fragment() {
                     is CategoryCreationState.Creating -> {
                         Toast.makeText(
                             requireContext(),
-                            "Đang tạo category...",
+                            "Creating category...",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
                     is CategoryCreationState.Success -> {
                         Toast.makeText(
                             requireContext(),
-                            "Đã tạo category: ${state.category.name}",
+                            "Category created: ${state.category.name}",
                             Toast.LENGTH_SHORT
                         ).show()
                         vm.resetCategoryCreationState()
@@ -190,7 +202,7 @@ class BudgetFragment : Fragment() {
                     is CategoryCreationState.Error -> {
                         Toast.makeText(
                             requireContext(),
-                            "Lỗi tạo category: ${state.message}",
+                            "Error creating category: ${state.message}",
                             Toast.LENGTH_LONG
                         ).show()
                         vm.resetCategoryCreationState()
