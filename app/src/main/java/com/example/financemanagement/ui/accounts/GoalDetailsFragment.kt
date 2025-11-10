@@ -181,7 +181,13 @@ class GoalDetailsFragment : Fragment() {
             // Progress
             val progressPercentage = (goal.progress * 100).toInt()
             Log.d("GoalDetailsFragment", "Updating progress: currentAmount=${goal.currentAmount}, goalAmount=${goal.goalAmount}, progress=${goal.progress}, percentage=$progressPercentage%")
-            tvProgressPercentage.text = "$progressPercentage% Complete"
+            // Set percentage text and progress bar value
+            tvProgressPercentage.text = "$progressPercentage%"
+            try {
+                progressBar.progress = progressPercentage
+            } catch (e: Exception) {
+                // Ignore if progressBar not present (defensive)
+            }
             
             // Amounts
             val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
