@@ -145,17 +145,7 @@ class HomeFragment : Fragment() {
         }
 
         sheetView.findViewById<View>(R.id.selectIncomeType).setOnClickListener {
-            // Handle Option 2
-            bottomSheetDialog.dismiss()
-        }
-
-        sheetView.findViewById<View>(R.id.selectTransferType).setOnClickListener {
-            // Handle Option 3
-            bottomSheetDialog.dismiss()
-        }
-
-        sheetView.findViewById<View>(R.id.selectBudgetType).setOnClickListener {
-            // Handle Option 4
+            findNavController().navigate(R.id.action_homeFragment_to_homeAddIncomeFragment)
             bottomSheetDialog.dismiss()
         }
     }

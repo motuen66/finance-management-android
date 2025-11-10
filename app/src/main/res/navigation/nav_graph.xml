@@ -47,6 +47,9 @@
         <action
             android:id="@+id/action_homeFragment_to_homeAddExpenseFragment"
             app:destination="@id/homeAddExpenseFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_homeAddIncomeFragment"
+            app:destination="@id/homeAddIncomeFragment" />
     </fragment>
 
     <fragment
@@ -102,5 +105,10 @@
         android:name="com.example.financemanagement.ui.home.HomeAddExpenseFragment"
         android:label="fragment_home_add_expense"
         tools:layout="@layout/fragment_home_add_expense" />
+    <fragment
+        android:id="@+id/homeAddIncomeFragment"
+        android:name="com.example.financemanagement.ui.home.HomeAddIncomeFragment"
+        android:label="fragment_home_add_income"
+        tools:layout="@layout/fragment_home_add_income" />
 
 </navigation>
