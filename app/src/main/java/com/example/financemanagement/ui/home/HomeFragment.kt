@@ -5,30 +5,28 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.financemanagement.R
 import com.example.financemanagement.databinding.FragmentHomeBinding
 import com.example.financemanagement.viewmodel.HomeViewModel
-import com.github.mikephil.charting.animation.Easing
-import com.github.mikephil.charting.components.Legend
-import com.github.mikephil.charting.data.*
-import com.github.mikephil.charting.formatter.PercentFormatter
-import com.github.mikephil.charting.utils.ColorTemplate
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import java.text.NumberFormat
-import java.util.*
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
     private val viewModel: HomeViewModel by viewModels()
-    
-    private val currencyFormatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
+    private lateinit var transactionGroupAdapter: TransactionGroupAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,194 +39,125 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        setupCharts()
-        observeData()
-        setupClickListeners()
+        setupUI()
+        observeViewModel()
     }
 
-    private fun setupClickListeners() {
-        binding.btnPrevMonth.setOnClickListener {
-            // TODO: Navigate to previous month
+    override fun onResume() {
+        super.onResume()
+        // Refresh transactions when returning to this fragment
+        viewModel.refreshTransactions()
+    }
+
+    private fun setupUI() {
+        // Setup RecyclerView for transaction groups
+        transactionGroupAdapter = TransactionGroupAdapter { transaction ->
+            // Handle transaction click
+            android.util.Log.d("HomeFragment", "Transaction clicked: ${transaction.id}")
+            // TODO: Navigate to transaction detail
         }
-        
-        binding.btnNextMonth.setOnClickListener {
-            // TODO: Navigate to next month
+
+        binding.rvTransactionGroups.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = transactionGroupAdapter
+        }
+
+        // Show bottom sheet when ADD button clicked
+        binding.openSelectTransactionTypeBtn.setOnClickListener {
+            showBottomSheet()
+        }
+
+        // Load more button
+        binding.btnLoadMore.setOnClickListener {
+            viewModel.loadMoreTransactions()
         }
     }
 
-    private fun observeData() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.summary.collectLatest { summary ->
-                updateSummaryCards(summary.income, summary.expense, summary.balance)
-                updatePieChart(summary.income, summary.expense)
-                updateBarChart(summary.transactions)
+    private fun observeViewModel() {
+        // Observe transaction groups
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.transactionGroups.collectLatest { groups ->
+                android.util.Log.d("HomeFragment", "Received ${groups.size} transaction groups")
+                transactionGroupAdapter.submitList(groups)
             }
         }
-        
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+
+        // Observe summary
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.summary.collectLatest { summary ->
+                // Update summary card
+                binding.summaryCard.tvIncome.text = formatAmount(summary.totalIncome)
+                binding.summaryCard.tvExpense.text = formatAmount(summary.totalExpense)
+                binding.summaryCard.tvBalance.text = formatAmount(summary.balance)
+
+                // Set balance color
+                val balanceColor = if (summary.balance >= 0) {
+                    0xFF4CAF50.toInt() // Green
+                } else {
+                    0xFFF44336.toInt() // Red
+                }
+                binding.summaryCard.tvBalance.setTextColor(balanceColor)
+            }
+        }
+
+        // Observe loading state
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isLoading.collectLatest { isLoading ->
                 binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             }
         }
-    }
 
-    private fun updateSummaryCards(income: Double, expense: Double, balance: Double) {
-        binding.tvIncome.text = formatCurrency(income)
-        binding.tvExpense.text = formatCurrency(expense)
-        binding.tvBalance.text = formatCurrency(balance)
-    }
-
-    private fun setupCharts() {
-        setupPieChart()
-        setupBarChart()
-    }
-
-    private fun setupPieChart() {
-        binding.pieChart.apply {
-            description.isEnabled = false
-            setUsePercentValues(true)
-            setEntryLabelTextSize(12f)
-            setEntryLabelColor(Color.BLACK)
-            centerText = "Income vs\nExpense"
-            setCenterTextSize(16f)
-            
-            legend.apply {
-                verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
-                horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
-                orientation = Legend.LegendOrientation.HORIZONTAL
-                setDrawInside(false)
-                textSize = 12f
+        // Observe errors
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.error.collectLatest { error ->
+                if (error != null) {
+                    Toast.makeText(requireContext(), "Error: $error", Toast.LENGTH_LONG).show()
+                }
             }
-            
-            setHoleColor(Color.TRANSPARENT)
-            holeRadius = 40f
-            transparentCircleRadius = 45f
-            
-            animateY(1000, Easing.EaseInOutQuad)
         }
     }
 
-    private fun setupBarChart() {
-        binding.barChart.apply {
-            description.isEnabled = false
-            setDrawGridBackground(false)
-            setDrawBarShadow(false)
-            
-            xAxis.apply {
-                setDrawGridLines(false)
-                position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM
-                granularity = 1f
-                textSize = 10f
-            }
-            
-            axisLeft.apply {
-                setDrawGridLines(true)
-                axisMinimum = 0f
-                textSize = 10f
-            }
-            
-            axisRight.isEnabled = false
-            
-            legend.apply {
-                verticalAlignment = Legend.LegendVerticalAlignment.TOP
-                horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
-                orientation = Legend.LegendOrientation.VERTICAL
-                setDrawInside(false)
-                textSize = 12f
-            }
-            
-            animateY(1000, Easing.EaseInOutQuad)
+    private fun formatAmount(amount: Double): String {
+        return if (amount >= 1_000_000) {
+            String.format("%.0fM", amount / 1_000_000)
+        } else if (amount >= 1_000) {
+            String.format("%.0fK", amount / 1_000)
+        } else {
+            String.format("%.0f", amount)
         }
-    }
-
-    private fun updatePieChart(income: Double, expense: Double) {
-        val entries = mutableListOf<PieEntry>()
-        
-        if (income > 0) {
-            entries.add(PieEntry(income.toFloat(), "Income"))
-        }
-        if (expense > 0) {
-            entries.add(PieEntry(expense.toFloat(), "Expense"))
-        }
-        
-        if (entries.isEmpty()) {
-            binding.pieChart.clear()
-            binding.pieChart.centerText = "No Data"
-            return
-        }
-        
-        val dataSet = PieDataSet(entries, "").apply {
-            colors = listOf(
-                Color.parseColor("#00C875"), // Green for income
-                Color.parseColor("#FF5A78")  // Red for expense
-            )
-            valueTextSize = 14f
-            valueTextColor = Color.WHITE
-            sliceSpace = 3f
-            selectionShift = 5f
-        }
-        
-        val data = PieData(dataSet).apply {
-            setValueFormatter(PercentFormatter(binding.pieChart))
-            setValueTextSize(12f)
-            setValueTextColor(Color.WHITE)
-        }
-        
-        binding.pieChart.data = data
-        binding.pieChart.invalidate()
-    }
-
-    private fun updateBarChart(transactions: List<com.example.financemanagement.domain.model.Transaction>) {
-        // Group transactions by day and calculate totals
-        val dailyData = transactions
-            .groupBy { it.date?.substring(0, 10) ?: "Unknown" } // Extract date only
-            .mapValues { (_, txns) ->
-                val income = txns.filter { it.type.equals("INCOME", ignoreCase = true) }.sumOf { it.amount }
-                val expense = txns.filter { it.type.equals("EXPENSE", ignoreCase = true) }.sumOf { it.amount }
-                Pair(income, expense)
-            }
-            .toList()
-            .take(7) // Show last 7 days
-        
-        if (dailyData.isEmpty()) {
-            binding.barChart.clear()
-            return
-        }
-        
-        val incomeEntries = dailyData.mapIndexed { index, (_, data) ->
-            BarEntry(index.toFloat(), data.first.toFloat())
-        }
-        
-        val expenseEntries = dailyData.mapIndexed { index, (_, data) ->
-            BarEntry(index.toFloat(), data.second.toFloat())
-        }
-        
-        val incomeDataSet = BarDataSet(incomeEntries, "Income").apply {
-            color = Color.parseColor("#00C875")
-            valueTextSize = 10f
-        }
-        
-        val expenseDataSet = BarDataSet(expenseEntries, "Expense").apply {
-            color = Color.parseColor("#FF5A78")
-            valueTextSize = 10f
-        }
-        
-        val barData = BarData(incomeDataSet, expenseDataSet).apply {
-            barWidth = 0.35f
-        }
-        
-        binding.barChart.data = barData
-        binding.barChart.groupBars(0f, 0.3f, 0f)
-        binding.barChart.invalidate()
-    }
-
-    private fun formatCurrency(amount: Double): String {
-        return currencyFormatter.format(amount)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun showBottomSheet() {
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+        val sheetView = layoutInflater.inflate(R.layout.fragment_home_select_transaction_type_bottom_sheet, null)
+
+        bottomSheetDialog.setContentView(sheetView)
+        bottomSheetDialog.show()
+
+        // Handle button clicks inside the sheet
+        sheetView.findViewById<View>(R.id.selectExpenseBtn).setOnClickListener {
+            bottomSheetDialog.dismiss()
+            findNavController().navigate(R.id.action_homeFragment_to_homeAddExpenseFragment)
+        }
+
+        sheetView.findViewById<View>(R.id.selectIncomeType).setOnClickListener {
+            // Handle Option 2
+            bottomSheetDialog.dismiss()
+        }
+
+        sheetView.findViewById<View>(R.id.selectTransferType).setOnClickListener {
+            // Handle Option 3
+            bottomSheetDialog.dismiss()
+        }
+
+        sheetView.findViewById<View>(R.id.selectBudgetType).setOnClickListener {
+            // Handle Option 4
+            bottomSheetDialog.dismiss()
+        }
     }
 }

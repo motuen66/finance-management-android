@@ -24,5 +24,8 @@ data class Transaction(
     @SerializedName("categoryId")
     val categoryId: String,
     
+    @SerializedName("categoryName")
+    val categoryName: String? = null,
+    
     val category: Category? = null
 )

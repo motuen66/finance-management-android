@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.financemanagement.utils.JwtHelper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +28,8 @@ class TokenManager @Inject constructor(
 ) {
     private val TOKEN_KEY = stringPreferencesKey("jwt_token")
 
+    private val USER_ID_KEY = stringPreferencesKey("user_id")
+
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     // cached token to be used from non-suspending places (eg: okHttp interceptor)
@@ -48,6 +51,9 @@ class TokenManager @Inject constructor(
         context.dataStore.edit { prefs ->
             prefs[TOKEN_KEY] = token
         }
+        context.dataStore.edit { prefs ->
+            prefs[USER_ID_KEY] = JwtHelper.getUserIdFromToken(token) as String
+        }
     }
 
     suspend fun clearToken() {
@@ -62,6 +68,31 @@ class TokenManager @Inject constructor(
         null
     }
 
+    suspend fun getUserId(): String? = try {
+        context.dataStore.data.map { it[USER_ID_KEY] }.first()
+    } catch (e: IOException) {
+        null
+    }
+
     // synchronous getter for interceptor
     fun getCachedToken(): String? = cachedToken
+    
+    // Extract userId from JWT token
+    fun getUserIdFromToken(): String? {
+        val token = cachedToken ?: return null
+        return try {
+            val parts = token.split(".")
+            if (parts.size != 3) return null
+            
+            val payload = parts[1]
+            val decodedBytes = android.util.Base64.decode(payload, android.util.Base64.URL_SAFE or android.util.Base64.NO_WRAP)
+            val decodedString = String(decodedBytes, Charsets.UTF_8)
+            
+            val userIdRegex = """"(?:userId|sub|id)"\s*:\s*"([^"]+)"""".toRegex()
+            userIdRegex.find(decodedString)?.groupValues?.get(1)
+        } catch (e: Exception) {
+            android.util.Log.e("TokenManager", "Failed to extract userId from token", e)
+            null
+        }
+    }
 }

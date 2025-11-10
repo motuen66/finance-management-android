@@ -54,6 +54,9 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
+    
+    // SwipeRefreshLayout
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     // Retrofit + Gson
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
@@ -73,6 +76,7 @@ dependencies {
     // Room (database) - MUST be before Hilt
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
+    implementation(libs.androidx.recyclerview)
     kapt("androidx.room:room-compiler:2.6.1")
 
     // Hilt (Dependency Injection) - Process AFTER Room

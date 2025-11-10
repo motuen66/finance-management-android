@@ -43,7 +43,11 @@
         android:id="@+id/homeFragment"
         android:name="com.example.financemanagement.ui.home.HomeFragment"
         android:label="Home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_homeAddExpenseFragment"
+            app:destination="@id/homeAddExpenseFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/reportsFragment"
@@ -54,8 +58,26 @@
     <fragment
         android:id="@+id/accountsFragment"
         android:name="com.example.financemanagement.ui.accounts.AccountsFragment"
-        android:label="Accounts"
-        tools:layout="@layout/fragment_accounts" />
+        android:label="Saving Goals"
+        tools:layout="@layout/fragment_saving_goals">
+        
+        <action
+            android:id="@+id/action_accountsFragment_to_goalDetailsFragment"
+            app:destination="@id/goalDetailsFragment" />
+            
+    </fragment>
+    
+    <fragment
+        android:id="@+id/goalDetailsFragment"
+        android:name="com.example.financemanagement.ui.accounts.GoalDetailsFragment"
+        android:label="Goal Details"
+        tools:layout="@layout/fragment_goal_details">
+        
+        <argument
+            android:name="goalId"
+            app:argType="string" />
+            
+    </fragment>
 
     <fragment
         android:id="@+id/budgetFragment"
@@ -75,5 +97,17 @@
         android:name="com.example.financemanagement.ui.dashboard.DashboardFragment"
         android:label="fragment_dashboard_new"
         tools:layout="@layout/fragment_dashboard_new" />
+    <fragment
+        android:id="@+id/homeAddExpenseFragment"
+        android:name="com.example.financemanagement.ui.home.HomeAddExpenseFragment"
+        android:label="fragment_home_add_expense"
+        tools:layout="@layout/fragment_home_add_expense" />
+
+    <!-- Category Management -->
+    <fragment
+        android:id="@+id/categoryListFragment"
+        android:name="com.example.financemanagement.ui.category.CategoryListFragment"
+        android:label="@string/categories"
+        tools:layout="@layout/fragment_category_list" />
 
 </navigation>
