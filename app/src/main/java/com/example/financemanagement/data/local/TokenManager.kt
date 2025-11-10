@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.financemanagement.utils.JwtHelper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +28,8 @@ class TokenManager @Inject constructor(
 ) {
     private val TOKEN_KEY = stringPreferencesKey("jwt_token")
 
+    private val USER_ID_KEY = stringPreferencesKey("user_id")
+
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     // cached token to be used from non-suspending places (eg: okHttp interceptor)
@@ -48,6 +51,9 @@ class TokenManager @Inject constructor(
         context.dataStore.edit { prefs ->
             prefs[TOKEN_KEY] = token
         }
+        context.dataStore.edit { prefs ->
+            prefs[USER_ID_KEY] = JwtHelper.getUserIdFromToken(token) as String
+        }
     }
 
     suspend fun clearToken() {
@@ -58,6 +64,12 @@ class TokenManager @Inject constructor(
 
     suspend fun getToken(): String? = try {
         context.dataStore.data.map { it[TOKEN_KEY] }.first()
+    } catch (e: IOException) {
+        null
+    }
+
+    suspend fun getUserId(): String? = try {
+        context.dataStore.data.map { it[USER_ID_KEY] }.first()
     } catch (e: IOException) {
         null
     }

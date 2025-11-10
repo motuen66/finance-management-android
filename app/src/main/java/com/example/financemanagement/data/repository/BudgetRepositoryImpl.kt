@@ -1,6 +1,7 @@
 package com.example.financemanagement.data.repository
 
 import android.util.Log
+import com.example.financemanagement.data.local.TokenManager
 import com.example.financemanagement.data.local.dao.BudgetDao
 import com.example.financemanagement.data.local.dao.CategoryDao
 import com.example.financemanagement.data.local.entities.toDomainModel
@@ -15,12 +16,9 @@ import javax.inject.Inject
 class BudgetRepositoryImpl @Inject constructor(
     private val api: ApiService,
     private val budgetDao: BudgetDao,
-    private val categoryDao: CategoryDao
+    private val categoryDao: CategoryDao,
+    private val tokenManager: TokenManager
 ) : BudgetRepository {
-
-    companion object {
-        private const val HARDCODED_USER_ID = "6904cf1320173db06b2641b8"
-    }
 
     override suspend fun getBudgets(): Result<List<Budget>> {
         return try {
@@ -99,8 +97,12 @@ class BudgetRepositoryImpl @Inject constructor(
 
     override suspend fun createBudget(request: BudgetRequest): Result<Budget> {
         return try {
-            // Create request with hardcoded userId
-            val requestWithUserId = request.copy(userId = HARDCODED_USER_ID)
+            val userId = tokenManager.getUserId()
+            if (userId == null) {
+                return Result.failure(Exception("User not authenticated"))
+            }
+            
+            val requestWithUserId = request.copy(userId = userId)
             
             val response = api.createBudget(requestWithUserId)
             
@@ -138,8 +140,12 @@ class BudgetRepositoryImpl @Inject constructor(
 
     override suspend fun updateBudget(id: String, request: BudgetRequest): Result<Budget> {
         return try {
-            // Create request with hardcoded userId
-            val requestWithUserId = request.copy(userId = HARDCODED_USER_ID)
+            val userId = tokenManager.getUserId()
+            if (userId == null) {
+                return Result.failure(Exception("User not authenticated"))
+            }
+            
+            val requestWithUserId = request.copy(userId = userId)
             
             val response = api.updateBudget(id, requestWithUserId)
             

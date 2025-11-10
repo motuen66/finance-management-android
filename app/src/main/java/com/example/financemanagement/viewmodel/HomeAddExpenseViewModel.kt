@@ -8,7 +8,6 @@ import com.example.financemanagement.data.repository.BudgetRepository
 import com.example.financemanagement.data.repository.TransactionRepository
 import com.example.financemanagement.domain.model.Budget
 import com.example.financemanagement.domain.model.Transaction
-import com.example.financemanagement.utils.JwtUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -41,17 +40,18 @@ class HomeAddExpenseViewModel @Inject constructor(
         _selectedCategoryId.value = categoryId
     }
 
-    suspend fun getUserId(): String {
-        // Hardcoded userId for testing
-        return "6904cf1320173db06b2641b8"
-    }
-
     fun fetchBudgets() {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
 
-            val userId = getUserId()
+            val userId = tokenManager.getUserId()
+            if (userId == null) {
+                android.util.Log.e("HomeAddExpenseViewModel", "Cannot fetch budgets: no userId")
+                _error.value = "User not authenticated"
+                _isLoading.value = false
+                return@launch
+            }
 
             android.util.Log.d("HomeAddExpenseViewModel", "Fetching budgets for userId: $userId")
             val result = budgetRepository.getBudgetsByUserId(userId)
@@ -82,7 +82,13 @@ class HomeAddExpenseViewModel @Inject constructor(
             _error.value = null
             _transactionCreated.value = null
 
-            val userId = getUserId()
+            val userId = tokenManager.getUserId()
+            if (userId == null) {
+                android.util.Log.e("HomeAddExpenseViewModel", "Cannot create transaction: no userId")
+                _error.value = "User not authenticated"
+                _isLoading.value = false
+                return@launch
+            }
 
             android.util.Log.d(
                 "HomeAddExpenseViewModel",

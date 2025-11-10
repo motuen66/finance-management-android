@@ -1,6 +1,7 @@
 package com.example.financemanagement.data.repository
 
 import android.util.Log
+import com.example.financemanagement.data.local.TokenManager
 import com.example.financemanagement.data.local.dao.CategoryDao
 import com.example.financemanagement.data.local.entities.toDomainModel
 import com.example.financemanagement.data.local.entities.toEntity
@@ -12,12 +13,9 @@ import javax.inject.Inject
 
 class CategoryRepositoryImpl @Inject constructor(
     private val api: ApiService,
-    private val categoryDao: CategoryDao
+    private val categoryDao: CategoryDao,
+    private val tokenManager: TokenManager
 ) : CategoryRepository {
-
-    companion object {
-        private const val HARDCODED_USER_ID = "6904cf1320173db06b2641b8"
-    }
 
     override suspend fun getCategories(): Result<List<Category>> {
         return try {
@@ -112,8 +110,15 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun createCategory(request: CategoryRequest): Result<Category> {
         return try {
-            // Create request with hardcoded userId
-            val requestWithUserId = request.copy(userId = HARDCODED_USER_ID)
+            // Extract userId from token
+            val userId = tokenManager.getUserId()
+            if (userId == null) {
+                Log.e("CategoryRepo", "User not authenticated")
+                return Result.failure(Exception("User not authenticated"))
+            }
+            
+            // Create request with userId from token
+            val requestWithUserId = request.copy(userId = userId)
             
             val response = api.createCategory(requestWithUserId)
             
@@ -151,8 +156,15 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun updateCategory(id: String, request: CategoryRequest): Result<Category> {
         return try {
-            // Create request with hardcoded userId
-            val requestWithUserId = request.copy(userId = HARDCODED_USER_ID)
+            // Extract userId from token
+            val userId = tokenManager.getUserId()
+            if (userId == null) {
+                Log.e("CategoryRepo", "User not authenticated")
+                return Result.failure(Exception("User not authenticated"))
+            }
+            
+            // Create request with userId from token
+            val requestWithUserId = request.copy(userId = userId)
             
             val response = api.updateCategory(id, requestWithUserId)
             

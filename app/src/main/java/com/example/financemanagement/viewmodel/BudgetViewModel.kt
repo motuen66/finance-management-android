@@ -2,6 +2,7 @@ package com.example.financemanagement.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.financemanagement.data.local.TokenManager
 import com.example.financemanagement.data.remote.models.CategoryRequest
 import com.example.financemanagement.data.repository.BudgetRepository
 import com.example.financemanagement.data.repository.CategoryRepository
@@ -30,12 +31,9 @@ sealed interface CategoryCreationState {
 @HiltViewModel
 class BudgetViewModel @Inject constructor(
     private val budgetRepo: BudgetRepository,
-    private val categoryRepo: CategoryRepository
+    private val categoryRepo: CategoryRepository,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
-
-    companion object {
-        private const val HARDCODED_USER_ID = "6904cf1320173db06b2641b8"
-    }
 
     private val _uiState = MutableStateFlow<BudgetUiState>(BudgetUiState.Idle)
     val uiState: StateFlow<BudgetUiState> = _uiState
@@ -51,6 +49,13 @@ class BudgetViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = BudgetUiState.Loading
             
+            // Get userId from token
+            val userId = tokenManager.getUserId()
+            if (userId == null) {
+                _uiState.value = BudgetUiState.Error("User not authenticated")
+                return@launch
+            }
+            
             // Fetch both budgets and categories
             val budgetsResult = budgetRepo.getBudgets()
             val categoriesResult = budgetRepo.getCategories()
@@ -62,7 +67,7 @@ class BudgetViewModel @Inject constructor(
                 // Filter only expense categories that belong to current user
                 val expenseCategories = allCategories.filter { 
                     it.type.equals("Expense", ignoreCase = true) && 
-                    it.userId == HARDCODED_USER_ID 
+                    it.userId == userId 
                 }
                 
                 _uiState.value = BudgetUiState.Success(
