@@ -33,16 +33,20 @@ class CategoryAdapter(
         fun bind(category: Category) {
             binding.tvCategoryName.text = category.name
             
-            // Set icon and badge based on category type
+            // Set icon, background color, and badge based on category type
             val context = binding.root.context
             val isIncome = category.type.equals("Income", ignoreCase = true)
             
             if (isIncome) {
+                // Income: Green theme
                 binding.ivCategoryIcon.setImageResource(com.example.financemanagement.R.drawable.ic_income)
+                binding.iconBg.setBackgroundColor(android.graphics.Color.parseColor("#D1FAE5"))
                 binding.tvCategoryType.text = context.getString(com.example.financemanagement.R.string.type_income)
                 binding.tvCategoryType.setBackgroundResource(com.example.financemanagement.R.drawable.badge_income)
             } else {
+                // Expense: Red theme
                 binding.ivCategoryIcon.setImageResource(com.example.financemanagement.R.drawable.ic_expense)
+                binding.iconBg.setBackgroundColor(android.graphics.Color.parseColor("#FEE2E2"))
                 binding.tvCategoryType.text = context.getString(com.example.financemanagement.R.string.type_expense)
                 binding.tvCategoryType.setBackgroundResource(com.example.financemanagement.R.drawable.badge_expense)
             }

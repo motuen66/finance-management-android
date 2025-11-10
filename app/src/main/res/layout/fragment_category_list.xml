@@ -8,24 +8,29 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="#F9FAFB">
 
         <!-- Toolbar with Dropdown Filter -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:elevation="4dp"
+            android:layout_height="64dp"
+            android:background="@android:color/white"
+            android:elevation="2dp"
             app:title="@string/categories"
-            app:titleTextColor="@android:color/white">
+            app:titleTextColor="#1F2937"
+            app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6">
 
             <Spinner
                 android:id="@+id/spinner_filter"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_gravity="end"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/spinner_background"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp" />
 
         </com.google.android.material.appbar.MaterialToolbar>
 
@@ -40,26 +45,56 @@
             tools:visibility="visible" />
 
         <!-- RecyclerView -->
-
-        <!-- Empty State -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_categories"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:clipToPadding="false"
-            android:padding="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:scrollbars="vertical"
+            android:overScrollMode="ifContentScrolls"
             tools:listitem="@layout/item_category" />
 
-        <TextView
+        <!-- Empty State -->
+        <LinearLayout
             android:id="@+id/tv_empty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/no_categories"
-            android:textSize="16sp"
+            android:orientation="vertical"
+            android:gravity="center"
             android:visibility="gone"
-            tools:visibility="visible" />
+            android:padding="32dp"
+            tools:visibility="visible">
+            
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/ic_income"
+                android:alpha="0.2"
+                app:tint="#9CA3AF"
+                android:contentDescription="No categories" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_categories"
+                android:textSize="18sp"
+                android:textColor="#6B7280"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginTop="16dp" />
+                
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tap + to create your first category"
+                android:textSize="14sp"
+                android:textColor="#9CA3AF"
+                android:layout_marginTop="8dp" />
+                
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -69,8 +104,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
+        android:layout_margin="24dp"
         android:contentDescription="@string/add_category"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:tint="@android:color/white"
+        app:fabSize="normal"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
