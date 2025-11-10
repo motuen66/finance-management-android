@@ -33,15 +33,6 @@ class IncomeCategoryAdapter(
 
         fun bind(category: Category) {
             binding.categoryName.text = category.name
-            binding.categoryType.text = category.type
-
-            // Set icon based on category type
-            val iconRes = if (category.type.equals("income", true))
-                R.drawable.ic_income
-            else
-                R.drawable.ic_expense
-
-            binding.categoryIcon.setImageResource(iconRes)
 
             binding.root.setOnClickListener {
                 onCategoryClick(category)

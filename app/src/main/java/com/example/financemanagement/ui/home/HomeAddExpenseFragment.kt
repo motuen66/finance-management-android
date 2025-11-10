@@ -53,7 +53,7 @@ class HomeAddExpenseFragment : Fragment() {
             // Save selected categoryId
             viewModel.setSelectedCategory(selectedBudget.categoryId)
         }
-        inlineBudgetList.layoutManager = LinearLayoutManager(requireContext())
+        inlineBudgetList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         inlineBudgetList.adapter = budgetAdapter
 
         // Show inline list when category field is clicked; fetch budgets if needed
