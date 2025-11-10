@@ -10,6 +10,8 @@ import com.example.financemanagement.data.repository.SavingGoalRepository
 import com.example.financemanagement.data.repository.SavingGoalRepositoryImpl
 import com.example.financemanagement.data.repository.TransactionRepository
 import com.example.financemanagement.data.repository.TransactionRepositoryImpl
+import com.example.financemanagement.data.repository.CategoryRepository
+import com.example.financemanagement.data.repository.CategoryRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -26,6 +28,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindTransactionRepository(impl: TransactionRepositoryImpl): TransactionRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCategoryRepository(impl: CategoryRepositoryImpl): CategoryRepository
 
     @Binds
     @Singleton

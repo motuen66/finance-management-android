@@ -2,10 +2,14 @@ package com.example.financemanagement.data.repository
 
 import android.util.Log
 import com.example.financemanagement.data.local.TokenManager
+<<<<<<< Updated upstream
 import com.example.financemanagement.data.local.dao.CategoryDao
 import com.example.financemanagement.data.local.entities.toDomainModel
 import com.example.financemanagement.data.local.entities.toEntity
 import com.example.financemanagement.data.remote.api.ApiService
+=======
+import com.example.financemanagement.data.remote.ApiService
+>>>>>>> Stashed changes
 import com.example.financemanagement.data.remote.models.CategoryRequest
 import com.example.financemanagement.domain.model.Category
 import java.io.IOException
@@ -13,13 +17,17 @@ import javax.inject.Inject
 
 class CategoryRepositoryImpl @Inject constructor(
     private val api: ApiService,
+<<<<<<< Updated upstream
     private val categoryDao: CategoryDao,
+=======
+>>>>>>> Stashed changes
     private val tokenManager: TokenManager
 ) : CategoryRepository {
 
     override suspend fun getCategories(): Result<List<Category>> {
         return try {
             val response = api.getCategories()
+<<<<<<< Updated upstream
             
             if (response.isSuccessful) {
                 val body = response.body()
@@ -31,6 +39,11 @@ class CategoryRepositoryImpl @Inject constructor(
                     } catch (e: Exception) {
                         Log.e("CategoryRepo", "Failed to cache categories locally", e)
                     }
+=======
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null) {
+>>>>>>> Stashed changes
                     Result.success(body)
                 } else {
                     Result.failure(Exception("Empty response body"))
@@ -46,6 +59,7 @@ class CategoryRepositoryImpl @Inject constructor(
             }
         } catch (e: IOException) {
             Log.e("CategoryRepo", "Network error", e)
+<<<<<<< Updated upstream
             // Try to get from local database if network fails
             try {
                 val localCategories = categoryDao.getAllCategories()
@@ -56,6 +70,8 @@ class CategoryRepositoryImpl @Inject constructor(
             } catch (dbError: Exception) {
                 Log.e("CategoryRepo", "Failed to get categories from local database", dbError)
             }
+=======
+>>>>>>> Stashed changes
             Result.failure(Exception("Network error: ${e.message}", e))
         } catch (e: Exception) {
             Log.e("CategoryRepo", "Unknown error", e)
@@ -66,6 +82,7 @@ class CategoryRepositoryImpl @Inject constructor(
     override suspend fun getCategoryById(id: String): Result<Category> {
         return try {
             val response = api.getCategoryById(id)
+<<<<<<< Updated upstream
             
             if (response.isSuccessful) {
                 val body = response.body()
@@ -76,6 +93,11 @@ class CategoryRepositoryImpl @Inject constructor(
                     } catch (e: Exception) {
                         Log.e("CategoryRepo", "Failed to cache category locally", e)
                     }
+=======
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null) {
+>>>>>>> Stashed changes
                     Result.success(body)
                 } else {
                     Result.failure(Exception("Empty response body"))
@@ -91,6 +113,7 @@ class CategoryRepositoryImpl @Inject constructor(
             }
         } catch (e: IOException) {
             Log.e("CategoryRepo", "Network error", e)
+<<<<<<< Updated upstream
             // Try to get from local database if network fails
             try {
                 val localCategory = categoryDao.getCategoryById(id)
@@ -101,6 +124,8 @@ class CategoryRepositoryImpl @Inject constructor(
             } catch (dbError: Exception) {
                 Log.e("CategoryRepo", "Failed to get category from local database", dbError)
             }
+=======
+>>>>>>> Stashed changes
             Result.failure(Exception("Network error: ${e.message}", e))
         } catch (e: Exception) {
             Log.e("CategoryRepo", "Unknown error", e)
@@ -108,6 +133,7 @@ class CategoryRepositoryImpl @Inject constructor(
         }
     }
 
+<<<<<<< Updated upstream
     override suspend fun createCategory(request: CategoryRequest): Result<Category> {
         return try {
             // Extract userId from token
@@ -132,6 +158,16 @@ class CategoryRepositoryImpl @Inject constructor(
                     } catch (e: Exception) {
                         Log.e("CategoryRepo", "Failed to save category to local database", e)
                     }
+=======
+    override suspend fun createCategory(name: String, type: String): Result<Category> {
+        return try {
+            val userId = tokenManager.getUserIdFromToken()
+            val request = CategoryRequest(name = name, type = type, userId = userId)
+            val response = api.createCategory(request)
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null) {
+>>>>>>> Stashed changes
                     Result.success(body)
                 } else {
                     Result.failure(Exception("Empty response body"))
@@ -154,6 +190,7 @@ class CategoryRepositoryImpl @Inject constructor(
         }
     }
 
+<<<<<<< Updated upstream
     override suspend fun updateCategory(id: String, request: CategoryRequest): Result<Category> {
         return try {
             // Extract userId from token
@@ -178,6 +215,16 @@ class CategoryRepositoryImpl @Inject constructor(
                     } catch (e: Exception) {
                         Log.e("CategoryRepo", "Failed to update category in local database", e)
                     }
+=======
+    override suspend fun updateCategory(id: String, name: String, type: String): Result<Category> {
+        return try {
+            val userId = tokenManager.getUserIdFromToken()
+            val request = CategoryRequest(name = name, type = type, userId = userId)
+            val response = api.updateCategory(id, request)
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null) {
+>>>>>>> Stashed changes
                     Result.success(body)
                 } else {
                     Result.failure(Exception("Empty response body"))
@@ -203,6 +250,7 @@ class CategoryRepositoryImpl @Inject constructor(
     override suspend fun deleteCategory(id: String): Result<Unit> {
         return try {
             val response = api.deleteCategory(id)
+<<<<<<< Updated upstream
             
             if (response.isSuccessful) {
                 // Delete from local database
@@ -212,6 +260,9 @@ class CategoryRepositoryImpl @Inject constructor(
                 } catch (e: Exception) {
                     Log.e("CategoryRepo", "Failed to delete category from local database", e)
                 }
+=======
+            if (response.isSuccessful) {
+>>>>>>> Stashed changes
                 Result.success(Unit)
             } else {
                 val errorMessage = try {
@@ -230,4 +281,10 @@ class CategoryRepositoryImpl @Inject constructor(
             Result.failure(Exception("Unknown error: ${e.message}", e))
         }
     }
+<<<<<<< Updated upstream
 }
+=======
+
+}
+
+>>>>>>> Stashed changes

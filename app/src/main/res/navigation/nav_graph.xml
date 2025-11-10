@@ -103,4 +103,11 @@
         android:label="fragment_home_add_expense"
         tools:layout="@layout/fragment_home_add_expense" />
 
+    <!-- Category Management -->
+    <fragment
+        android:id="@+id/categoryListFragment"
+        android:name="com.example.financemanagement.ui.category.CategoryListFragment"
+        android:label="@string/categories"
+        tools:layout="@layout/fragment_category_list" />
+
 </navigation>
