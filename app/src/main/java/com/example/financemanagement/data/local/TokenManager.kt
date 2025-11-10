@@ -76,4 +76,23 @@ class TokenManager @Inject constructor(
 
     // synchronous getter for interceptor
     fun getCachedToken(): String? = cachedToken
+    
+    // Extract userId from JWT token
+    fun getUserIdFromToken(): String? {
+        val token = cachedToken ?: return null
+        return try {
+            val parts = token.split(".")
+            if (parts.size != 3) return null
+            
+            val payload = parts[1]
+            val decodedBytes = android.util.Base64.decode(payload, android.util.Base64.URL_SAFE or android.util.Base64.NO_WRAP)
+            val decodedString = String(decodedBytes, Charsets.UTF_8)
+            
+            val userIdRegex = """"(?:userId|sub|id)"\s*:\s*"([^"]+)"""".toRegex()
+            userIdRegex.find(decodedString)?.groupValues?.get(1)
+        } catch (e: Exception) {
+            android.util.Log.e("TokenManager", "Failed to extract userId from token", e)
+            null
+        }
+    }
 }

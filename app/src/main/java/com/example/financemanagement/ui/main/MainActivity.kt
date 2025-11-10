@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_inbox -> {
-                    navController.navigate(R.id.inboxFragment)
+                    navController.navigate(R.id.categoryListFragment)
                     true
                 }
                 else -> false

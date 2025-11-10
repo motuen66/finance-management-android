@@ -67,7 +67,7 @@ interface ApiService {
         @Body request: BudgetRequest
     ): Response<Budget>
 
-    @DELETE("api/Budgets/{id}")
+    @DELETE("api/Budgets/{id}") 
     suspend fun deleteBudget(@Path("id") id: String): Response<Unit>
 
     // ========== SAVING GOALS ==========
