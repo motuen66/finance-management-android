@@ -7,7 +7,7 @@ import com.example.financemanagement.data.local.entities.toDomainModel
 import com.example.financemanagement.data.local.entities.toEntity
 import com.example.financemanagement.data.remote.models.BudgetRequest
 import com.example.financemanagement.domain.model.Category
-import com.example.financemanagement.data.remote.ApiService
+import com.example.financemanagement.data.remote.api.ApiService
 import com.example.financemanagement.domain.model.Budget
 import java.io.IOException
 import javax.inject.Inject

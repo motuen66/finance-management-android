@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.financemanagement.data.local.dao.CategoryDao
 import com.example.financemanagement.data.local.entities.toDomainModel
 import com.example.financemanagement.data.local.entities.toEntity
-import com.example.financemanagement.data.remote.ApiService
+import com.example.financemanagement.data.remote.api.ApiService
 import com.example.financemanagement.data.remote.models.CategoryRequest
 import com.example.financemanagement.domain.model.Category
 import java.io.IOException
