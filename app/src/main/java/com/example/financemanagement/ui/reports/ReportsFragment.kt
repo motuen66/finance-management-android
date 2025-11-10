@@ -8,16 +8,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.financemanagement.R
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.financemanagement.databinding.FragmentReportsBinding
-import com.example.financemanagement.viewmodel.HomeViewModel
+import com.example.financemanagement.viewmodel.ReportsViewModel
+import com.example.financemanagement.viewmodel.SpendingCategory
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.PercentFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 @AndroidEntryPoint
@@ -25,19 +28,22 @@ class ReportsFragment : Fragment() {
 
     private var _binding: FragmentReportsBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: HomeViewModel by viewModels()
+    private val viewModel: ReportsViewModel by viewModels()
     
     private val currencyFormatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
+    private val dateFormatter = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
     
-    // Màu sắc cho categories (vibrant colors như hình mẫu)
+    private lateinit var categoryAdapter: SpendingCategoryAdapter
+    
+    // Category colors
     private val categoryColors = listOf(
-        Color.parseColor("#5B8DEE"), // Blue
-        Color.parseColor("#9D7BEA"), // Purple  
-        Color.parseColor("#FF6B9D"), // Pink
         Color.parseColor("#FFA26B"), // Orange
+        Color.parseColor("#6BCF7F"), // Green
+        Color.parseColor("#9D7BEA"), // Purple
+        Color.parseColor("#FF6B9D"), // Pink
+        Color.parseColor("#5B8DEE"), // Blue
         Color.parseColor("#4ECDC4"), // Teal
         Color.parseColor("#FFD93D"), // Yellow
-        Color.parseColor("#6BCF7F"), // Green
         Color.parseColor("#FF6B6B")  // Red
     )
 
@@ -53,74 +59,101 @@ class ReportsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        setupCharts()
+        setupRecyclerView()
+        setupDonutChart()
+        setupComparisonChart()
+        setupMonthSelector()
         observeData()
-        setupClickListeners()
+        
+        // Fetch data
+        viewModel.fetchTransactions()
     }
 
-    private fun setupClickListeners() {
-        // Month selector buttons removed for now - will add back later
-        // TODO: Add prev/next month buttons
-    }
-
-    private fun observeData() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.summary.collectLatest { summary ->
-                updateMainCard(summary.income, summary.expense)
-                updateStatsCards(summary.income, summary.expense, summary.balance)
-                updateCategoryChart(summary.transactions)
-                updateBarChart(summary.transactions)
-            }
+    private fun setupRecyclerView() {
+        categoryAdapter = SpendingCategoryAdapter { category ->
+            // Highlight corresponding chart segment
+            highlightChartSegment(category)
         }
         
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.isLoading.collectLatest { isLoading ->
-                binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-            }
+        binding.rvCategories.apply {
+            layoutManager = GridLayoutManager(requireContext(), 1)
+            adapter = categoryAdapter
         }
     }
 
-    private fun updateMainCard(income: Double, expense: Double) {
-        binding.tvIncomeMain.text = formatCurrency(income)
-        binding.tvExpenseMain.text = formatCurrency(expense)
-        updateMainPieChart(income, expense)
+    private fun setupDonutChart() {
+        binding.donutChart.apply {
+            description.isEnabled = false
+            setUsePercentValues(true)
+            setDrawEntryLabels(false)
+            
+            // Center text
+            setDrawCenterText(true)
+            setCenterTextSize(18f)
+            setCenterTextColor(Color.parseColor("#2B2240"))
+            
+            // Donut style
+            setHoleColor(Color.TRANSPARENT)
+            holeRadius = 70f
+            transparentCircleRadius = 75f
+            
+            // Legend
+            legend.isEnabled = false
+            
+            // Rotation
+            rotationAngle = 0f
+            isRotationEnabled = true
+            isHighlightPerTapEnabled = true
+            
+            // Animation
+            animateY(1400, Easing.EaseInOutQuad)
+        }
     }
 
-    private fun updateStatsCards(income: Double, expense: Double, balance: Double) {
-        binding.tvBalance.text = formatCurrency(balance)
-        binding.tvIncomeStat.text = formatCurrency(income)
+    private fun setupTabs() {
+        // Removed - using month selector instead
+    }
+
+    private fun updateTabSelection(tabIndex: Int) {
+        // Removed - using month selector instead
+    }
+
+    private fun setupMonthSelector() {
+        // Update month display
+        updateMonthDisplay()
         
-        // Saving = Income - Expense (same as balance for now)
-        val saving = balance
-        binding.tvSaving.text = formatCurrency(saving)
+        binding.btnPrevMonth.setOnClickListener {
+            viewModel.previousMonth()
+        }
         
-        // TODO: Calculate percentages from previous month data
-        // For now, show placeholder
+        binding.btnNextMonth.setOnClickListener {
+            viewModel.nextMonth()
+        }
     }
 
-    private fun setupCharts() {
-        setupMainPieChart()
-        setupCategoryPieChart()
-        setupBarChart()
+    private fun updateMonthDisplay() {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.YEAR, viewModel.currentYear)
+        calendar.set(Calendar.MONTH, viewModel.currentMonth - 1) // Calendar months are 0-based
+        
+        binding.tvCurrentMonth.text = dateFormatter.format(calendar.time)
     }
 
-    private fun setupMainPieChart() {
-        binding.pieChartMain.apply {
+    private fun setupComparisonChart() {
+        binding.chartIncomeExpense.apply {
             description.isEnabled = false
             setUsePercentValues(false)
             setDrawEntryLabels(false)
             
-            // Center text với Total value
-            setDrawCenterText(true)
-            setCenterTextSize(18f)
-            setCenterTextColor(Color.parseColor("#1F2937"))
+            // Center text
+            setDrawCenterText(false)
             
-            // Hole configuration (donut style)
+            // Donut style
             setHoleColor(Color.TRANSPARENT)
-            holeRadius = 75f  // Lỗ lớn hơn để hiển thị text
-            transparentCircleRadius = 80f
+            holeRadius = 60f
+            transparentCircleRadius = 65f
             
-            // Legend ẩn đi vì đã có custom legend bên dưới
+            // Legend
             legend.isEnabled = false
             
             // Rotation
@@ -128,197 +161,162 @@ class ReportsFragment : Fragment() {
             isRotationEnabled = false
             isHighlightPerTapEnabled = false
             
-            animateY(1200, Easing.EaseInOutQuad)
-        }
-    }
-
-    private fun setupCategoryPieChart() {
-        binding.pieChartCategory.apply {
-            description.isEnabled = false
-            setUsePercentValues(true)
-            setDrawEntryLabels(false)
-            
-            setHoleColor(Color.TRANSPARENT)
-            holeRadius = 50f
-            transparentCircleRadius = 55f
-            
-            setDrawCenterText(false)
-            
-            // Legend configuration
-            legend.apply {
-                isEnabled = false  // Sẽ dùng RecyclerView custom
-            }
-            
-            rotationAngle = 0f
-            isRotationEnabled = true
-            isHighlightPerTapEnabled = true
-            
-            animateY(1400, Easing.EaseInOutQuad)
-        }
-    }
-    private fun setupBarChart() {
-        binding.barChart.apply {
-            description.isEnabled = false
-            setDrawGridBackground(false)
-            setDrawBarShadow(false)
-            
-            xAxis.apply {
-                setDrawGridLines(false)
-                position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM
-                granularity = 1f
-                textSize = 10f
-                textColor = Color.parseColor("#6B7280")
-            }
-            
-            axisLeft.apply {
-                setDrawGridLines(true)
-                gridColor = Color.parseColor("#E5E7EB")
-                axisMinimum = 0f
-                textSize = 10f
-                textColor = Color.parseColor("#6B7280")
-            }
-            
-            axisRight.isEnabled = false
-            
-            legend.apply {
-                verticalAlignment = Legend.LegendVerticalAlignment.TOP
-                horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
-                orientation = Legend.LegendOrientation.HORIZONTAL
-                setDrawInside(false)
-                textSize = 12f
-                textColor = Color.parseColor("#1F2937")
-            }
-            
+            // Animation
             animateY(1000, Easing.EaseInOutQuad)
         }
     }
 
-    private fun updateMainPieChart(income: Double, expense: Double) {
-        val total = income + expense
-        val entries = mutableListOf<PieEntry>()
-        
-        if (income > 0) {
-            entries.add(PieEntry(income.toFloat(), "Income"))
+    private fun observeData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.reportState.collectLatest { state ->
+                binding.progressBar.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+                
+                // Update month display when state changes
+                updateMonthDisplay()
+                
+                // Update stats cards with real data from APIs
+                updateStatsCards(state.totalIncome, state.totalExpense, state.totalSavings, state.totalBudget)
+                
+                if (state.error != null) {
+                    showEmptyState()
+                    return@collectLatest
+                }
+                
+                if (state.categories.isEmpty()) {
+                    showEmptyState()
+                } else {
+                    hideEmptyState()
+                    updateDonutChart(state.totalAmount, state.period, state.categories)
+                    categoryAdapter.submitList(state.categories)
+                }
+                
+                // Update comparison chart
+                updateComparisonChart(state.totalIncome, state.totalExpense)
+            }
         }
-        if (expense > 0) {
-            entries.add(PieEntry(expense.toFloat(), "Expense"))
+    }
+
+    private fun updateStatsCards(totalIncome: Long, totalExpense: Long, totalSavings: Long, totalBudget: Long) {
+        binding.tvStatExpense.text = currencyFormatter.format(totalExpense)
+        binding.tvStatIncome.text = currencyFormatter.format(totalIncome)
+        
+        // Display total savings from saving goals API
+        binding.tvStatSavings.text = currencyFormatter.format(totalSavings)
+        
+        // Display total budget from budgets API
+        binding.tvStatBudget.text = currencyFormatter.format(totalBudget)
+    }
+
+    private fun updateComparisonChart(totalIncome: Long, totalExpense: Long) {
+        val entries = mutableListOf<PieEntry>()
+        val colors = mutableListOf<Int>()
+        
+        if (totalExpense > 0) {
+            entries.add(PieEntry(totalExpense.toFloat(), "Expense"))
+            colors.add(Color.parseColor("#FF6B6B")) // Red
+        }
+        
+        if (totalIncome > 0) {
+            entries.add(PieEntry(totalIncome.toFloat(), "Income"))
+            colors.add(Color.parseColor("#6BCF7F")) // Green
         }
         
         if (entries.isEmpty()) {
-            binding.pieChartMain.clear()
-            binding.pieChartMain.centerText = "No Data"
+            binding.chartIncomeExpense.clear()
+            binding.tvTotalExpense.text = currencyFormatter.format(0)
+            binding.tvTotalIncome.text = currencyFormatter.format(0)
+            binding.tvSavings.text = currencyFormatter.format(0)
             return
         }
         
         val dataSet = PieDataSet(entries, "").apply {
-            colors = listOf(
-                Color.parseColor("#5B8DEE"),  // Blue cho Income
-                Color.parseColor("#FF6B9D")   // Pink cho Expense
-            )
-            valueTextSize = 0f  // Ẩn text trên slice
-            sliceSpace = 4f
-            selectionShift = 8f
-        }
-        
-        val data = PieData(dataSet)
-        binding.pieChartMain.data = data
-        
-        // Set center text với total amount
-        binding.pieChartMain.centerText = "${formatCurrency(total)}\nTotal"
-        
-        binding.pieChartMain.invalidate()
-    }
-
-    private fun updateCategoryChart(transactions: List<com.example.financemanagement.domain.model.Transaction>) {
-        // Filter chỉ lấy expense transactions
-        val expenseTransactions = transactions.filter { 
-            it.type.equals("EXPENSE", ignoreCase = true) 
-        }
-        
-        if (expenseTransactions.isEmpty()) {
-            binding.pieChartCategory.clear()
-            // RecyclerView legend removed for simplicity
-            return
-        }
-        
-        // Group by category và tính tổng
-        val categoryData = expenseTransactions
-            .groupBy { it.category?.name ?: "Other" }
-            .mapValues { (_, txns) -> txns.sumOf { it.amount } }
-            .toList()
-            .sortedByDescending { it.second }  // Sort theo amount giảm dần
-        
-        val entries = categoryData.map { (category, amount) ->
-            PieEntry(amount.toFloat(), category)
-        }
-        
-        val dataSet = PieDataSet(entries, "").apply {
-            colors = categoryColors.take(entries.size)
-            valueTextSize = 14f
-            valueTextColor = Color.WHITE
-            sliceSpace = 3f
-            selectionShift = 6f
+            this.colors = colors
+            valueTextSize = 0f // Hide values on chart
+            sliceSpace = 2f
+            selectionShift = 0f
         }
         
         val data = PieData(dataSet).apply {
-            setValueFormatter(PercentFormatter(binding.pieChartCategory))
+            setDrawValues(false)
+        }
+        
+        binding.chartIncomeExpense.data = data
+        binding.chartIncomeExpense.invalidate()
+        
+        // Update text values
+        binding.tvTotalExpense.text = currencyFormatter.format(totalExpense)
+        binding.tvTotalIncome.text = currencyFormatter.format(totalIncome)
+        
+        val savings = totalIncome - totalExpense
+        binding.tvSavings.text = currencyFormatter.format(savings)
+    }
+
+    private fun updateDonutChart(
+        totalAmount: Long,
+        period: String,
+        categories: List<SpendingCategory>
+    ) {
+        val entries = categories.map { category ->
+            PieEntry(category.percent, category.name)
+        }
+        
+        if (entries.isEmpty()) {
+            binding.donutChart.clear()
+            binding.donutChart.centerText = "No Data"
+            return
+        }
+        
+        val dataSet = PieDataSet(entries, "").apply {
+            colors = categories.map { it.color }
+            valueTextSize = 14f
+            valueTextColor = Color.WHITE
+            sliceSpace = 3f
+            selectionShift = 8f
+        }
+        
+        val data = PieData(dataSet).apply {
+            setValueFormatter(PercentFormatter(binding.donutChart))
             setValueTextSize(12f)
             setValueTextColor(Color.WHITE)
         }
         
-        binding.pieChartCategory.data = data
-        binding.pieChartCategory.invalidate()
+        binding.donutChart.data = data
         
-        // Legend will be shown in chart itself
+        // Center text
+        val formattedAmount = currencyFormatter.format(totalAmount)
+        val periodText = when (period) {
+            "Week" -> "this Week"
+            "Month" -> "this ${getCurrentMonth()}"
+            "Year" -> "this Year"
+            else -> "this Month"
+        }
+        binding.donutChart.centerText = "Spent $periodText\n$formattedAmount"
+        
+        binding.donutChart.invalidate()
     }
 
-    private fun updateBarChart(transactions: List<com.example.financemanagement.domain.model.Transaction>) {
-        val dailyData = transactions
-            .groupBy { it.date?.substring(0, 10) ?: "Unknown" }
-            .mapValues { (_, txns) ->
-                val income = txns
-                    .filter { it.type.equals("INCOME", ignoreCase = true) }
-                    .sumOf { it.amount }
-                val expense = txns
-                    .filter { it.type.equals("EXPENSE", ignoreCase = true) }
-                    .sumOf { it.amount }
-                Pair(income, expense)
-            }
-            .toList()
-            .take(7)
-        
-        if (dailyData.isEmpty()) {
-            binding.barChart.clear()
-            return
+    private fun highlightChartSegment(category: SpendingCategory) {
+        binding.donutChart.highlightValue(null)
+        val categories = categoryAdapter.currentList
+        val index = categories.indexOf(category)
+        if (index >= 0) {
+            binding.donutChart.highlightValue(index.toFloat(), 0)
         }
-        
-        val incomeEntries = dailyData.mapIndexed { index, (_, data) ->
-            BarEntry(index.toFloat(), data.first.toFloat())
-        }
-        
-        val expenseEntries = dailyData.mapIndexed { index, (_, data) ->
-            BarEntry(index.toFloat(), data.second.toFloat())
-        }
-        
-        val incomeDataSet = BarDataSet(incomeEntries, "Income").apply {
-            color = Color.parseColor("#5B8DEE")
-            valueTextSize = 10f
-            valueTextColor = Color.parseColor("#1F2937")
-        }
-        
-        val expenseDataSet = BarDataSet(expenseEntries, "Expense").apply {
-            color = Color.parseColor("#FF6B9D")
-            valueTextSize = 10f
-            valueTextColor = Color.parseColor("#1F2937")
-        }
-        
-        val barData = BarData(incomeDataSet, expenseDataSet).apply {
-            barWidth = 0.35f
-        }
-        
-        binding.barChart.data = barData
-        binding.barChart.groupBars(0f, 0.3f, 0f)
-        binding.barChart.invalidate()
+    }
+
+    private fun showEmptyState() {
+        binding.emptyState.visibility = View.VISIBLE
+        binding.rvCategories.visibility = View.GONE
+        binding.donutChart.clear()
+    }
+
+    private fun hideEmptyState() {
+        binding.emptyState.visibility = View.GONE
+        binding.rvCategories.visibility = View.VISIBLE
+    }
+
+    private fun getCurrentMonth(): String {
+        return SimpleDateFormat("MMMM", Locale.getDefault()).format(Date())
     }
 
     private fun formatCurrency(amount: Double): String {

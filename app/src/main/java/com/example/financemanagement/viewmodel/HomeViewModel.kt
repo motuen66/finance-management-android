@@ -155,7 +155,12 @@ class HomeViewModel @Inject constructor(
         }
 
         val balance = totalIncome - totalExpense
-        _summary.value = TransactionSummary(totalIncome, totalExpense, balance)
+        _summary.value = TransactionSummary(
+            totalIncome = totalIncome,
+            totalExpense = totalExpense,
+            balance = balance,
+            transactions = transactions
+        )
     }
 
     fun refreshTransactions() {
