@@ -47,14 +47,7 @@ class BudgetAdapter(
             binding.tvEdit.setOnClickListener {
                 onEditClick(item)
             }
-            
-            binding.ivArrow.setOnClickListener {
-                onEditClick(item)
-            }
-            
-            binding.ivDelete.setOnClickListener {
-                onDeleteClick(item)
-            }
+
         }
     }
 

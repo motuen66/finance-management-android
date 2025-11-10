@@ -15,36 +15,14 @@
         android:padding="16dp"
         android:background="@drawable/bg_card_purple_shadow">
 
-        <!-- Delete Icon with Gradient Background -->
-        <View
-            android:id="@+id/view_delete_bg"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@drawable/circle_red_background"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-        <ImageView
-            android:id="@+id/iv_delete"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_minus"
-            android:contentDescription="Delete budget"
-            app:tint="@color/white"
-            app:layout_constraintStart_toStartOf="@id/view_delete_bg"
-            app:layout_constraintEnd_toEndOf="@id/view_delete_bg"
-            app:layout_constraintTop_toTopOf="@id/view_delete_bg"
-            app:layout_constraintBottom_toBottomOf="@id/view_delete_bg" />
-
         <!-- Category Icon with Purple Background -->
         <View
             android:id="@+id/view_category_bg"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="12dp"
-            android:background="@drawable/bg_icon_gradient"
-            app:layout_constraintStart_toEndOf="@id/view_delete_bg"
+            android:background="@drawable/circle_background"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -82,13 +60,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
-            android:text="đ"
+            android:text="vnđ"
             android:textColor="@color/primary_gradient_start"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/tv_amount"
+            app:layout_constraintEnd_toEndOf="@id/tv_amount"
+            app:layout_constraintEnd_toStartOf="@id/tv_edit"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
 
         <TextView
             android:id="@+id/tv_amount"
@@ -99,7 +79,8 @@
             android:textSize="18sp"
             android:textStyle="bold"
             tools:text="20,000"
-            app:layout_constraintEnd_toStartOf="@id/tv_edit"
+            app:layout_constraintEnd_toEndOf="@id/tv_category_name"
+            app:layout_constraintEnd_toStartOf="@id/tv_currency_symbol"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -113,19 +94,6 @@
             android:textSize="14sp"
             android:paddingHorizontal="8dp"
             android:paddingVertical="4dp"
-            app:layout_constraintEnd_toStartOf="@id/iv_arrow"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-        <!-- Arrow Icon -->
-        <ImageView
-            android:id="@+id/iv_arrow"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginStart="4dp"
-            android:src="@drawable/ic_arrow_right"
-            android:contentDescription="Arrow"
-            app:tint="@color/text_secondary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />

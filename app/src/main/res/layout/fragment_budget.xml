@@ -3,9 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/gradient_purple_pink">
-
+    android:layout_height="match_parent">
+    <View
+        android:layout_width="0dp"
+        android:layout_height="280dp"
+        android:background="@drawable/bg_button_gradient"
+        tools:ignore="MissingConstraints" />
     <!-- Header Title -->
     <TextView
         android:id="@+id/tv_title"
@@ -56,61 +59,46 @@
         app:layout_constraintTop_toTopOf="@id/view_content_background"
         app:layout_constraintBottom_toBottomOf="@id/view_content_background">
 
-            <!-- Add Category Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_add_category"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginEnd="16dp"
-                android:text="+ Add Category"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:background="@drawable/bg_button_gradient"
-                app:backgroundTint="@null"
-                app:cornerRadius="12dp"
-                android:paddingHorizontal="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <!-- Monthly Budget Header Card -->
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_monthly_budget"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                android:backgroundTint="@color/surface"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="8dp"
+                app:strokeWidth="2dp"
+                app:strokeColor="#1565C0"
+                app:cardBackgroundColor="@color/surface"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btn_add_category">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    android:background="@drawable/bg_card_purple_shadow">
+                    android:padding="24dp"
+                    android:background="@drawable/bg_gradient_blue">
 
                     <!-- Money Bag Icon with Purple Background -->
                     <View
                         android:id="@+id/view_icon_bg"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/bg_icon_gradient"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:background="@drawable/circle_background"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent" />
                     
                     <TextView
                         android:id="@+id/tv_money_icon"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:gravity="center"
                         android:text="💰"
-                        android:textSize="28sp"
+                        android:textSize="36sp"
                         app:layout_constraintStart_toStartOf="@id/view_icon_bg"
                         app:layout_constraintEnd_toEndOf="@id/view_icon_bg"
                         app:layout_constraintTop_toTopOf="@id/view_icon_bg"
@@ -119,25 +107,26 @@
                     <!-- Monthly Budget Text -->
                     <TextView
                         android:id="@+id/tv_monthly_budget_label"
-                        android:layout_width="0dp"
+                        android:layout_width="120dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:text="Monthly Budget"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp"
+                        android:textColor="@android:color/white"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
                         app:layout_constraintStart_toEndOf="@id/view_icon_bg"
                         app:layout_constraintEnd_toStartOf="@id/tv_total_budget"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/tv_month_year"
-                        android:layout_width="0dp"
+                        android:layout_width="140dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="4dp"
                         android:text="November 2025"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp"
+                        android:textColor="@android:color/white"
+                        android:textSize="17sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toEndOf="@id/view_icon_bg"
                         app:layout_constraintEnd_toStartOf="@id/tv_total_budget"
@@ -148,25 +137,29 @@
                         android:id="@+id/tv_currency"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="đ"
-                        android:textColor="@color/primary_gradient_start"
-                        android:textSize="18sp"
+                        android:text=" đ"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         android:layout_marginEnd="4dp"
-                        app:layout_constraintEnd_toStartOf="@id/tv_total_budget"
+                        app:layout_constraintStart_toEndOf="@id/tv_total_budget"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent" />
-                    
+
                     <TextView
                         android:id="@+id/tv_total_budget"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
-                        android:textColor="@color/text_primary"
-                        android:textSize="24sp"
+                        android:textColor="@android:color/white"
+                        android:textSize="26sp"
                         android:textStyle="bold"
+                        android:shadowColor="#40000000"
+                        android:shadowDx="2"
+                        android:shadowDy="2"
+                        android:shadowRadius="4"
                         tools:text="21,000"
-                        app:layout_constraintEnd_toStartOf="@id/btn_add_budget"
+                        app:layout_constraintEnd_toStartOf="@id/tv_currency"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -188,7 +181,7 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- RecyclerView for Budget List -->
             <androidx.recyclerview.widget.RecyclerView

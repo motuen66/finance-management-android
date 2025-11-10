@@ -91,18 +91,8 @@ class BudgetFragment : Fragment() {
     private fun setupClickListeners() {
         // Hide Add Budget button - budgets are created from expense categories
         binding.btnAddBudget.visibility = View.GONE
-
-        binding.btnAddCategory.setOnClickListener {
-            showAddCategoryDialog()
-        }
     }
 
-    private fun showAddCategoryDialog() {
-        val dialog = AddCategoryDialog { categoryName ->
-            vm.createCategory(categoryName)
-        }
-        dialog.show(childFragmentManager, "AddCategoryDialog")
-    }
 
     private fun showEditBudgetDialog(budgetItem: BudgetItem) {
         val dialog = EditBudgetDialog(
