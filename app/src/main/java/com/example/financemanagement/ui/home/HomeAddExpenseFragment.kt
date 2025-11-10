@@ -207,8 +207,13 @@ class HomeAddExpenseFragment : Fragment() {
             val month = parts[1].toInt()
             val year = parts[2].toInt()
 
-            val calendar = Calendar.getInstance()
-            calendar.set(year, month - 1, day, 0, 0, 0)
+            // Use UTC timezone from the start to avoid date shifting
+            val calendar = Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"))
+            
+            // Get current time for hour/minute/second
+            val now = Calendar.getInstance()
+            
+            calendar.set(year, month - 1, day, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), now.get(Calendar.SECOND))
             calendar.set(Calendar.MILLISECOND, 0)
 
             // Format to ISO 8601

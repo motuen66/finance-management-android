@@ -61,6 +61,20 @@ class HomeFragment : Fragment() {
             }
         }.attach()
 
+        // Refresh data when tab is selected
+        binding.tabLayout.addOnTabSelectedListener(object : com.google.android.material.tabs.TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: com.google.android.material.tabs.TabLayout.Tab?) {
+                // Refresh transactions when switching tabs
+                viewModel.refreshTransactions()
+            }
+
+            override fun onTabUnselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {}
+            override fun onTabReselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {
+                // Also refresh when same tab is tapped again
+                viewModel.refreshTransactions()
+            }
+        })
+
         // Show bottom sheet when ADD button clicked
         binding.openSelectTransactionTypeBtn.setOnClickListener {
             showBottomSheet()
@@ -125,8 +139,8 @@ class HomeFragment : Fragment() {
         }
 
         sheetView.findViewById<View>(R.id.selectIncomeType).setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_homeAddIncomeFragment)
             bottomSheetDialog.dismiss()
+            findNavController().navigate(R.id.action_homeFragment_to_homeAddIncomeFragment)
         }
     }
 }

@@ -38,6 +38,13 @@ class HomeDailyFragment : Fragment() {
         observeViewModel()
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Refresh when fragment becomes visible
+        android.util.Log.d("HomeDailyFragment", "onResume - refreshing data")
+        viewModel.refreshTransactions()
+    }
+
     private fun setupUI() {
         // Setup RecyclerView for transaction groups
         transactionGroupAdapter = TransactionGroupAdapter { transaction ->

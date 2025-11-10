@@ -45,6 +45,13 @@ class HomeCalendarFragment : Fragment() {
         observeTransactions()
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Refresh when fragment becomes visible
+        android.util.Log.d("HomeCalendarFragment", "onResume - refreshing data")
+        viewModel.refreshTransactions()
+    }
+
     private fun setupCalendar() {
         // Setup RecyclerView with 7 columns (days of week)
         calendarAdapter = CalendarAdapter { day ->
