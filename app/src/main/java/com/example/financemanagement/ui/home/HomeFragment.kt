@@ -9,11 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.financemanagement.R
 import com.example.financemanagement.databinding.FragmentHomeBinding
 import com.example.financemanagement.viewmodel.HomeViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -25,7 +25,6 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: HomeViewModel by viewModels()
-    private lateinit var transactionGroupAdapter: TransactionGroupAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,38 +48,26 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupUI() {
-        // Setup RecyclerView for transaction groups
-        transactionGroupAdapter = TransactionGroupAdapter { transaction ->
-            // Handle transaction click
-            android.util.Log.d("HomeFragment", "Transaction clicked: ${transaction.id}")
-            // TODO: Navigate to transaction detail
-        }
+        // Setup ViewPager2 with tabs
+        val tabsAdapter = HomeTabsAdapter(this)
+        binding.viewPager.adapter = tabsAdapter
 
-        binding.rvTransactionGroups.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = transactionGroupAdapter
-        }
+        // Connect TabLayout with ViewPager2
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = when (position) {
+                0 -> "Daily"
+                1 -> "Calendar"
+                else -> "Daily"
+            }
+        }.attach()
 
         // Show bottom sheet when ADD button clicked
         binding.openSelectTransactionTypeBtn.setOnClickListener {
             showBottomSheet()
         }
-
-        // Load more button
-        binding.btnLoadMore.setOnClickListener {
-            viewModel.loadMoreTransactions()
-        }
     }
 
     private fun observeViewModel() {
-        // Observe transaction groups
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.transactionGroups.collectLatest { groups ->
-                android.util.Log.d("HomeFragment", "Received ${groups.size} transaction groups")
-                transactionGroupAdapter.submitList(groups)
-            }
-        }
-
         // Observe summary
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.summary.collectLatest { summary ->
@@ -96,13 +83,6 @@ class HomeFragment : Fragment() {
                     0xFFF44336.toInt() // Red
                 }
                 binding.summaryCard.tvBalance.setTextColor(balanceColor)
-            }
-        }
-
-        // Observe loading state
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.isLoading.collectLatest { isLoading ->
-                binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             }
         }
 
