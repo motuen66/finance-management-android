@@ -52,80 +52,34 @@ It enables users to:
 
 ## 3) Folder Structure
 
-```
-com.example.financemanagement
+com.example.financeapp
 │
 ├── data
-│   ├── local/                    # Room, DAO, Entities, TokenManager
-│   │   ├── dao/                  # All DAOs (UserDao, TransactionDao, etc.)
-│   │   ├── db/                   # AppDatabase configuration
-│   │   ├── entities/             # Room entities (UserEntity, TransactionEntity, etc.)
-│   │   └── TokenManager.kt       # JWT token management with DataStore
-│   │
-│   ├── remote/                   # Retrofit API, DTOs, ApiService
-│   │   ├── api/                  # ApiService interface
-│   │   └── models/               # API request/response DTOs
-│   │
-│   └── repository/               # Repository interfaces & implementations
-│       ├── AuthRepository.kt
-│       ├── AuthRepositoryImpl.kt
-│       ├── TransactionRepository.kt
-│       ├── TransactionRepositoryImpl.kt
-│       ├── SavingGoalRepository.kt
-│       └── SavingGoalRepositoryImpl.kt
-│
-├── di/                           # Hilt dependency injection modules
-│   ├── NetworkModule.kt          # Retrofit, OkHttp, ApiService
-│   ├── DatabaseModule.kt         # Room database, DAOs
-│   └── RepositoryModule.kt       # Repository bindings
+│ ├── local/ # Room, DAO, Entities
+│ ├── remote/ # Retrofit API, DTOs
+│ ├── repository/ # Repository implementations
+│ └── mapper/ # DTO ↔ Domain conversions
 │
 ├── domain
-│   └── model/                    # Domain models (business entities)
-│       ├── Transaction.kt
-│       ├── Budget.kt
-│       ├── Category.kt
-│       ├── SavingGoal.kt
-│       ├── Report.kt
-│       └── User.kt
+│ ├── model/ # Business entities
+│ └── usecase/ # Use cases
 │
 ├── ui
-│   ├── auth/                     # Authentication screens
-│   │   ├── LoginFragment.kt
-│   │   └── RegisterFragment.kt
-│   │
-│   ├── dashboard/                # Dashboard/Home screen
-│   │   └── DashboardFragment.kt
-│   │
-│   ├── main/                     # Main activity
-│   │   └── MainActivity.kt
-│   │
-│   └── common/                   # Shared UI components (optional)
-│       ├── EmptyStateView.kt
-│       └── LoadingView.kt
+│ ├── home/
+│ ├── reports/
+│ ├── accounts/
+│ ├── budget/
+│ ├── savings/
+│ ├── auth/
+│ └── common/ # Shared components
 │
-├── viewmodel/                    # ViewModels (separate from UI)
-│   ├── AuthViewModel.kt
-│   └── DashboardViewModel.kt
+├── core/
+│ ├── network/ # Interceptors, Retrofit setup
+│ ├── database/ # Room database config
+│ ├── datastore/ # Token handling
+│ └── utils/ # Helpers, extensions
 │
-└── utils/                        # Helpers, extensions, constants
-    └── Constants.kt              # API base URL, preferences keys
-```
-
-### Current Implementation Status
-
-**Implemented:**
-- ✅ Data layer: Room entities, DAOs, API service, repositories
-- ✅ DI: Hilt modules for network, database, repositories
-- ✅ Domain: Models for Transaction, Budget, Category, SavingGoal, Report, User
-- ✅ UI: Login, Register, Dashboard fragments
-- ✅ ViewModels: Auth, Dashboard with StateFlow
-- ✅ Navigation Component with nav_graph.xml
-
-**Not Yet Implemented (Future):**
-- ⏳ UI screens: Reports, Accounts, Budget management
-- ⏳ Use cases layer (currently using repositories directly)
-- ⏳ Mappers for DTO ↔ Domain conversion (currently using domain models directly)
-- ⏳ Common UI components library
+└── di/ # Hilt modules
 
 
 ---
@@ -222,125 +176,32 @@ data class SavingGoal(
   val goalDate: LocalDate,
   val isCompleted: Boolean
 )
-## 7) Networking
+7) Networking
 
-**Base URL:** Configured in `Constants.kt`:
-```kotlin
-const val BASE_URL = "https://financetracker-be-hrg9czdme5hbawfq.southeastasia-01.azurewebsites.net/"
-```
+Base URL: from BuildConfig.API_BASE_URL
 
-**Token Management:**
-- JWT token saved in DataStore via `TokenManager`
-- Auto-attached via `AuthInterceptor` in `NetworkModule`
-- Header format: `Authorization: Bearer <token>`
+Token: Add Authorization: Bearer <token> via OkHttp Interceptor
 
-**Timeout Configuration:**
-- Connect: 30 seconds
-- Read: 30 seconds
-- Write: 30 seconds
+Timeout: 30 seconds (connect/read/write)
 
-**Logging:**
-- `HttpLoggingInterceptor` with `Level.BODY` (enabled in all builds)
-- Can be changed to debug-only if needed
+Logging: Only in Debug mode
 
-**Error Handling:**
-- HTTP 401 → Session expired / Invalid token
-- HTTP 500 → Server error
-- Network errors → Wrapped in `Result<T>` with proper error messages
+Error handling: map HTTP 401 → “Session expired”, etc.
 
-**API Endpoints (Implemented):**
-```kotlin
-// Authentication
-POST /api/Account/login
-POST /api/Account/register
+8) Repository & Use Case Rules
 
-// Transactions
-GET /api/Transactions
-GET /api/Transactions/{id}
-POST /api/Transactions
-PUT /api/Transactions/{id}
-DELETE /api/Transactions/{id}
+Repositories combine Room + Remote API sources.
 
-// Categories
-GET /api/Categories
-POST /api/Categories
-PUT /api/Categories/{id}
-DELETE /api/Categories/{id}
+Expose data as Flow<T> or Result<T>.
 
-// Budgets
-GET /api/Budgets
-POST /api/Budgets
-PUT /api/Budgets/{id}
-DELETE /api/Budgets/{id}
+UseCases handle validation & business logic (no Android context).
 
-// Saving Goals
-GET /api/SavingGoals
-POST /api/SavingGoals
-PUT /api/SavingGoals/{id}
-DELETE /api/SavingGoals/{id}
-
-// Reports
-GET /api/Reports
-POST /api/Reports/generate
-GET /api/Reports/{id}
-
-// Users
-GET /api/Users/me
-PUT /api/Users/me
-```
-
-## 8) Repository Pattern (Current Implementation)
-
-**Repository Rules:**
-- Repositories combine Room + Remote API sources
-- Return `Result<T>` for operations that can fail
-- Return `Flow<T>` for observable data streams
-- Handle errors and convert to domain models
-
-**Current Implementation:**
-```kotlin
-interface AuthRepository {
-    suspend fun login(request: LoginRequest): Result<LoginResponse>
-    suspend fun register(request: RegisterRequest): Result<RegisterResponse>
-    suspend fun logout()
-    fun observeToken(): Flow<String?>
-}
-
-class AuthRepositoryImpl @Inject constructor(
-    private val api: ApiService,
-    private val tokenManager: TokenManager
-) : AuthRepository {
-    override suspend fun login(request: LoginRequest): Result<LoginResponse> {
-        return try {
-            val response = api.login(request)
-            if (response.isSuccessful && response.body() != null) {
-                val body = response.body()!!
-                tokenManager.saveToken(body.token)
-                Result.success(body)
-            } else {
-                Result.failure(Exception("Login failed"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-}
-```
-
-**Use Cases (Future Enhancement):**
-- Currently ViewModels call repositories directly
-- Can add use case layer later for complex business logic
-- Example structure:
-```kotlin
+Example:
 class GetMonthlySummaryUseCase @Inject constructor(
-    private val repo: TransactionRepository
+  private val repo: TransactionRepository
 ) {
-    suspend operator fun invoke(month: YearMonth): Result<Summary> {
-        // Add validation, business logic here
-        return repo.getSummary(month)
-    }
+  suspend operator fun invoke(month: YearMonth): Summary = repo.getSummary(month)
 }
-```
 9) UI Components & Shared Elements
 Component	Purpose
 PrimaryButton	Full-width gradient button
@@ -387,104 +248,23 @@ Create a screen listing goals with progress bars. Add “+ Add Goal” button le
 Prompt 9 — Authentication
 
 Implement login/register screens with gradient background, email/password inputs, “Sign in” button, and token saved via DataStore.
-## 11) State Management
+11) State Management
 
-**Current Implementation:**
-
-ViewModels use sealed classes for state:
-```kotlin
-sealed class AuthState {
-    object Idle : AuthState()
-    object Loading : AuthState()
-    data class LoginSuccess(val response: LoginResponse) : AuthState()
-    data class RegisterSuccess(val response: RegisterResponse) : AuthState()
-    data class Error(val message: String) : AuthState()
-}
-```
-
-Or use separate StateFlows:
-```kotlin
-class DashboardViewModel @Inject constructor(
-    private val savingGoalRepository: SavingGoalRepository
-) : ViewModel() {
-    
-    private val _savingGoals = MutableStateFlow<List<SavingGoal>>(emptyList())
-    val savingGoals: StateFlow<List<SavingGoal>> = _savingGoals
-
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
-
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
-    
-    fun fetchSavingGoals() {
-        viewModelScope.launch {
-            _isLoading.value = true
-            _error.value = null
-            
-            val result = savingGoalRepository.getSavingGoals()
-            
-            if (result.isSuccess) {
-                _savingGoals.value = result.getOrThrow()
-            } else {
-                _error.value = result.exceptionOrNull()?.message
-            }
-            
-            _isLoading.value = false
-        }
-    }
-}
-```
-
-**UI Observation:**
-```kotlin
-viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-    viewModel.savingGoals.collectLatest { list ->
-        if (list.isEmpty()) {
-            showEmptyState()
-        } else {
-            renderList(list)
-        }
-    }
-}
-
-viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-    viewModel.isLoading.collectLatest { isLoading ->
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
-}
-
-viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-    viewModel.error.collectLatest { error ->
-        error?.let { 
-            Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show() 
-        }
-    }
-}
-```
-
-**Alternative Pattern (Recommended for Future):**
-```kotlin
+Each ViewModel exposes:
 data class UiState<T>(
-    val loading: Boolean = false,
-    val data: T? = null,
-    val error: String? = null,
-    val empty: Boolean = false
+  val loading: Boolean = false,
+  val data: T? = null,
+  val error: String? = null,
+  val empty: Boolean = false
 )
-
-// In ViewModel
-private val _uiState = MutableStateFlow(UiState<List<SavingGoal>>())
-val uiState: StateFlow<UiState<List<SavingGoal>>> = _uiState
-
-// In Fragment
+UI observes with:
 viewLifecycleOwner.lifecycleScope.launch {
-    viewModel.uiState.collect { state ->
-        when {
-            state.loading -> showLoading()
-            state.error != null -> showError(state.error)
-            state.empty -> showEmptyView()
-            else -> render(state.data)
-        }
+  viewModel.state.collect { state ->
+    when {
+      state.loading -> showLoading()
+      state.error != null -> showError(state.error)
+      state.empty -> showEmptyView()
+      else -> render(state.data)
     }
+  }
 }
-```
