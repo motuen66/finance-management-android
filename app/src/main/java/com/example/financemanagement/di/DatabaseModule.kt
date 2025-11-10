@@ -56,4 +56,10 @@ object DatabaseModule {
     fun provideSavingGoalDao(database: AppDatabase): SavingGoalDao {
         return database.savingGoalDao()
     }
+
+    @Provides
+    @Singleton
+    fun provideSavingContributionDao(database: AppDatabase): SavingContributionDao {
+        return database.savingContributionDao()
+    }
 }

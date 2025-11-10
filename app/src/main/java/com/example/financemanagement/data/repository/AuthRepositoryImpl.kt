@@ -1,7 +1,7 @@
 package com.example.financemanagement.data.repository
 
 import com.example.financemanagement.data.local.TokenManager
-import com.example.financemanagement.data.remote.ApiService
+import com.example.financemanagement.data.remote.api.ApiService
 import com.example.financemanagement.data.remote.models.LoginRequest
 import com.example.financemanagement.data.remote.models.LoginResponse
 import com.example.financemanagement.data.remote.models.RegisterRequest

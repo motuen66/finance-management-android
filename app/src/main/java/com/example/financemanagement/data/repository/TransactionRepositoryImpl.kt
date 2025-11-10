@@ -1,7 +1,7 @@
 package com.example.financemanagement.data.repository
 
 import android.util.Log
-import com.example.financemanagement.data.remote.ApiService
+import com.example.financemanagement.data.remote.api.ApiService
 import com.example.financemanagement.domain.model.Transaction
 import java.io.IOException
 import javax.inject.Inject

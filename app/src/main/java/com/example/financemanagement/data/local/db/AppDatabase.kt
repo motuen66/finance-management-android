@@ -7,11 +7,13 @@ import androidx.room.RoomDatabase
 import com.example.financemanagement.data.local.dao.BudgetDao
 import com.example.financemanagement.data.local.dao.CategoryDao
 import com.example.financemanagement.data.local.dao.SavingGoalDao
+import com.example.financemanagement.data.local.dao.SavingContributionDao
 import com.example.financemanagement.data.local.dao.TransactionDao
 import com.example.financemanagement.data.local.dao.UserDao
 import com.example.financemanagement.data.local.entities.BudgetEntity
 import com.example.financemanagement.data.local.entities.CategoryEntity
 import com.example.financemanagement.data.local.entities.SavingGoalEntity
+import com.example.financemanagement.data.local.entities.SavingContributionEntity
 import com.example.financemanagement.data.local.entities.TransactionEntity
 import com.example.financemanagement.data.local.entities.UserEntity
 
@@ -21,9 +23,10 @@ import com.example.financemanagement.data.local.entities.UserEntity
         TransactionEntity::class,
         CategoryEntity::class,
         BudgetEntity::class,
-        SavingGoalEntity::class
+        SavingGoalEntity::class,
+        SavingContributionEntity::class
     ],
-    version = 2,
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -33,6 +36,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
     abstract fun budgetDao(): BudgetDao
     abstract fun savingGoalDao(): SavingGoalDao
+    abstract fun savingContributionDao(): SavingContributionDao
 
     companion object {
         @Volatile
@@ -43,9 +47,9 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "finance_management_database"
+                    "finance_management_database_v4" // New database name to force recreation
                 )
-                    .fallbackToDestructiveMigration() // Delete old db when update version
+                    .fallbackToDestructiveMigration() // This will recreate DB on schema changes
                     .build()
                 INSTANCE = instance
                 instance
