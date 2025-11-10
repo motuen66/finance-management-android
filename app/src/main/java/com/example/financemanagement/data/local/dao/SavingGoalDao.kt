@@ -43,4 +43,13 @@ interface SavingGoalDao {
     
     @Query("DELETE FROM saving_goals")
     suspend fun deleteAllSavingGoals(): Int
+    
+    @Query("UPDATE saving_goals SET current_amount = :newAmount WHERE id = :goalId")
+    suspend fun updateCurrentAmount(goalId: String, newAmount: Double)
+    
+    @Query("UPDATE saving_goals SET is_completed = :isCompleted WHERE id = :goalId")
+    suspend fun updateCompletionStatus(goalId: String, isCompleted: Boolean)
+    
+    @Query("SELECT * FROM saving_goals WHERE user_id = :userId ORDER BY created_at DESC")
+    fun observeGoalsByUserId(userId: String?): Flow<List<SavingGoalEntity>>
 }

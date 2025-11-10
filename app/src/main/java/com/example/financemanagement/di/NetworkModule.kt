@@ -2,7 +2,7 @@ package com.example.financemanagement.di
 
 import com.example.financemanagement.utils.Constants
 import com.example.financemanagement.data.local.TokenManager
-import com.example.financemanagement.data.remote.ApiService
+import com.example.financemanagement.data.remote.api.ApiService
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

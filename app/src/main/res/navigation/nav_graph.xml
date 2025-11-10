@@ -58,8 +58,26 @@
     <fragment
         android:id="@+id/accountsFragment"
         android:name="com.example.financemanagement.ui.accounts.AccountsFragment"
-        android:label="Accounts"
-        tools:layout="@layout/fragment_accounts" />
+        android:label="Saving Goals"
+        tools:layout="@layout/fragment_saving_goals">
+        
+        <action
+            android:id="@+id/action_accountsFragment_to_goalDetailsFragment"
+            app:destination="@id/goalDetailsFragment" />
+            
+    </fragment>
+    
+    <fragment
+        android:id="@+id/goalDetailsFragment"
+        android:name="com.example.financemanagement.ui.accounts.GoalDetailsFragment"
+        android:label="Goal Details"
+        tools:layout="@layout/fragment_goal_details">
+        
+        <argument
+            android:name="goalId"
+            app:argType="string" />
+            
+    </fragment>
 
     <fragment
         android:id="@+id/budgetFragment"

@@ -1,4 +1,4 @@
-package com.example.financemanagement.data.remote
+package com.example.financemanagement.data.remote.api
 
 import com.example.financemanagement.data.remote.models.*
 import com.example.financemanagement.domain.model.*
@@ -78,16 +78,26 @@ interface ApiService {
     suspend fun getSavingGoalById(@Path("id") id: String): Response<SavingGoal>
 
     @POST("api/SavingGoals")
-    suspend fun createSavingGoal(@Body request: SavingGoalRequest): Response<SavingGoal>
+    suspend fun createSavingGoal(@Body goal: SavingGoal): Response<SavingGoal>
 
     @PUT("api/SavingGoals/{id}")
     suspend fun updateSavingGoal(
         @Path("id") id: String,
-        @Body request: SavingGoalRequest
+        @Body goal: SavingGoal
     ): Response<SavingGoal>
 
     @DELETE("api/SavingGoals/{id}")
     suspend fun deleteSavingGoal(@Path("id") id: String): Response<Unit>
+
+    // ========== SAVING CONTRIBUTIONS ==========
+    @GET("api/SavingGoals/{goalId}/contributions")
+    suspend fun getContributionsByGoalId(@Path("goalId") goalId: String): Response<List<SavingContribution>>
+
+    @POST("api/SavingGoals/contributions")
+    suspend fun addContribution(@Body contribution: SavingContribution): Response<SavingContribution>
+
+    @DELETE("api/SavingGoals/contributions/{id}")
+    suspend fun deleteContribution(@Path("id") contributionId: String): Response<Unit>
 
     // ========== REPORTS ==========
     @GET("api/Reports")

@@ -17,6 +17,9 @@ data class SavingGoalEntity(
     @ColumnInfo(name = "title")
     val title: String,
     
+    @ColumnInfo(name = "description")
+    val description: String?,
+    
     @ColumnInfo(name = "goal_amount")
     val goalAmount: Double,
     
@@ -25,6 +28,9 @@ data class SavingGoalEntity(
     
     @ColumnInfo(name = "goal_date")
     val goalDate: String,
+    
+    @ColumnInfo(name = "created_at")
+    val createdAt: String?,
     
     @ColumnInfo(name = "is_completed")
     val isCompleted: Boolean
@@ -35,9 +41,11 @@ fun SavingGoalEntity.toDomainModel() = SavingGoal(
     id = id,
     userId = userId,
     title = title,
+    description = description,
     goalAmount = goalAmount,
     currentAmount = currentAmount,
     goalDate = goalDate,
+    createdAt = createdAt,
     isCompleted = isCompleted
 )
 
@@ -45,8 +53,10 @@ fun SavingGoal.toEntity() = SavingGoalEntity(
     id = id,
     userId = userId,
     title = title,
+    description = description,
     goalAmount = goalAmount,
     currentAmount = currentAmount,
     goalDate = goalDate,
+    createdAt = createdAt,
     isCompleted = isCompleted
 )
