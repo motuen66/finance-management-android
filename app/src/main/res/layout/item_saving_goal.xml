@@ -172,7 +172,7 @@
                 android:textSize="12sp"
                 app:strokeColor="@android:color/darker_gray"
                 app:strokeWidth="1dp"
-                app:cornerRadius="8dp" />  <!-- bo nhẹ góc -->
+                app:cornerRadius="20dp" />  <!-- bo góc 20dp -->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_view_details"
@@ -184,7 +184,7 @@
                 android:textSize="12sp"
                 app:strokeColor="@android:color/darker_gray"
                 app:strokeWidth="1dp"
-                app:cornerRadius="8dp" />  <!-- bo nhẹ góc -->
+                app:cornerRadius="20dp" />  <!-- bo góc 20dp -->
 
 
 

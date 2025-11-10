@@ -18,7 +18,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Đăng ký tài khoản"
+            android:text="Sign up new account"
+            android:textColor="@color/purple_500"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="32dp" />
@@ -26,13 +27,17 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxCornerRadiusTopStart="20dp"
+            app:boxCornerRadiusTopEnd="20dp"
+            app:boxCornerRadiusBottomEnd="20dp"
+            app:boxCornerRadiusBottomStart="20dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inputName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Họ và tên"
+                android:hint="Full name"
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -40,7 +45,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxCornerRadiusTopStart="20dp"
+            app:boxCornerRadiusTopEnd="20dp"
+            app:boxCornerRadiusBottomEnd="20dp"
+            app:boxCornerRadiusBottomStart="20dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inputEmail"
@@ -55,13 +64,17 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:passwordToggleEnabled="true">
+            app:passwordToggleEnabled="true"
+            app:boxCornerRadiusTopStart="20dp"
+            app:boxCornerRadiusTopEnd="20dp"
+            app:boxCornerRadiusBottomEnd="20dp"
+            app:boxCornerRadiusBottomStart="20dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inputPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Mật khẩu"
+                android:hint="Password"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -74,18 +87,21 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRegister"
+            style="@style/Widget.App.PrimaryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Đăng ký"
-            android:layout_marginTop="24dp" />
+            android:text="Sign up"
+            android:layout_marginTop="24dp"
+            app:cornerRadius="20dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnBackToLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Đã có tài khoản? Đăng nhập"
+            android:text="Already had account? Sign in now"
             android:layout_marginTop="8dp"
-            style="@style/Widget.MaterialComponents.Button.TextButton" />
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:cornerRadius="20dp" />
 
     </LinearLayout>
 
