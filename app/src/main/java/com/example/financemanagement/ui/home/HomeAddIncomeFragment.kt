@@ -50,7 +50,7 @@ class HomeAddIncomeFragment : Fragment() {
             // Save selected categoryId
             viewModel.setSelectedCategory(selectedCategory.id)
         }
-        inlineCategoryList.layoutManager = LinearLayoutManager(requireContext())
+        inlineCategoryList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         inlineCategoryList.adapter = categoryAdapter
 
         // Show inline list when category field is clicked; fetch categories if needed
