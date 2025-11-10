@@ -5,14 +5,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.financemanagement.databinding.ItemBudgetBinding
+import com.example.financemanagement.databinding.FragmentHomeItemBudgetBinding
 import com.example.financemanagement.domain.model.Budget
 
 class BudgetAdapter(private val onBudgetClick: (Budget) -> Unit) :
     ListAdapter<Budget, BudgetAdapter.BudgetViewHolder>(BudgetDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BudgetViewHolder {
-        val binding = ItemBudgetBinding.inflate(
+        val binding = FragmentHomeItemBudgetBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
         return BudgetViewHolder(binding)
@@ -22,7 +22,7 @@ class BudgetAdapter(private val onBudgetClick: (Budget) -> Unit) :
         holder.bind(getItem(position))
     }
 
-    inner class BudgetViewHolder(private val binding: ItemBudgetBinding) :
+    inner class BudgetViewHolder(private val binding: FragmentHomeItemBudgetBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         init {

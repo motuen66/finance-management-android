@@ -4,6 +4,8 @@ import com.example.financemanagement.data.repository.AuthRepository
 import com.example.financemanagement.data.repository.AuthRepositoryImpl
 import com.example.financemanagement.data.repository.BudgetRepository
 import com.example.financemanagement.data.repository.BudgetRepositoryImpl
+import com.example.financemanagement.data.repository.CategoryRepository
+import com.example.financemanagement.data.repository.CategoryRepositoryImpl
 import com.example.financemanagement.data.repository.SavingGoalRepository
 import com.example.financemanagement.data.repository.SavingGoalRepositoryImpl
 import com.example.financemanagement.data.repository.TransactionRepository
@@ -32,4 +34,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindBudgetRepository(impl: BudgetRepositoryImpl): BudgetRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCategoryRepository(impl: CategoryRepositoryImpl): CategoryRepository
 }
