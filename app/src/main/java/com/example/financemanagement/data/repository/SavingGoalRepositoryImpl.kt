@@ -31,6 +31,20 @@ class SavingGoalRepositoryImpl @Inject constructor(
                     // Cache data locally
                     val entities = body.map { it.toEntity() }
                     savingGoalDao.insertSavingGoals(entities)
+
+                    // Ensure local goal current_amount is consistent with local contributions.
+                    // If the server data is stale (e.g. local contributions were added while offline),
+                    // recalculate progress from local contributions to avoid overwriting correct local totals.
+                    try {
+                        for (entity in entities) {
+                            // updateGoalProgress will compute total contributions from the contributionDao
+                            // and update the saving_goals current_amount accordingly.
+                            updateGoalProgress(entity.id)
+                        }
+                    } catch (e: Exception) {
+                        Log.w("SavingGoalRepo", "Failed to reconcile local progress after sync: ${e.message}")
+                    }
+
                     Result.success(body)
                 } else {
                     // Fallback to local data
