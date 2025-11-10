@@ -125,13 +125,15 @@ class InboxFragment : Fragment() {
         // Set category name
         itemBinding.tvCategoryName.text = cat.name
         
-        // Set icon and badge based on type
+        // Set icon, background, and badge based on type
         if (isIncome) {
             itemBinding.ivCategoryIcon.setImageResource(R.drawable.ic_income)
+            itemBinding.iconBg.setBackgroundColor(android.graphics.Color.parseColor("#D1FAE5"))
             itemBinding.tvCategoryType.text = getString(R.string.type_income)
             itemBinding.tvCategoryType.setBackgroundResource(R.drawable.badge_income)
         } else {
             itemBinding.ivCategoryIcon.setImageResource(R.drawable.ic_expense)
+            itemBinding.iconBg.setBackgroundColor(android.graphics.Color.parseColor("#FEE2E2"))
             itemBinding.tvCategoryType.text = getString(R.string.type_expense)
             itemBinding.tvCategoryType.setBackgroundResource(R.drawable.badge_expense)
         }
